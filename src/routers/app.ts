@@ -1,7 +1,8 @@
 import express from 'express';
 import './server.js';
-import { trackRouter } from './track.js'
-import { userRouter } from './user.js'
+import { trackRouter } from './track.js';
+import { userRouter } from './user.js';
+import { retoRouter } from './retos.js';
  
 export const server = express();
 server.use(express.json());

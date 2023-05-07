@@ -1,7 +1,7 @@
 import { Document, model, Schema } from 'mongoose';
 import { TrackDocumentInterface } from './track.js';
 
-interface UserDocumentInterface extends Document {
+export interface UserDocumentInterface extends Document {
   nombre: string;
   actividad: 'Correr' | 'Bicicleta';
   amigos: UserDocumentInterface[];
