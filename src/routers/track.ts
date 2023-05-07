@@ -16,7 +16,7 @@ trackRouter.post('/', async (req, res) => {
 
 //* BUSCAR POR NOMBRE
 trackRouter.get('/', async (req, res) => {
-  const filter = req.query.name?{name: req.query.name.toString()}:{};
+  const filter = req.query.nombre?{nombre: req.query.nombre.toString()}:{};
 
   try {
     const tracks = await Track.find(filter);
@@ -44,14 +44,14 @@ trackRouter.get('/:id', async (req, res) => {
   }
 });
 
-//* Borrar por name
+//* Borrar por nombre
 trackRouter.delete('/', async (req, res) => { 
-  if (!req.query.name) {
+  if (!req.query.nombre) {
     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder borrarla"});
   }
 
   try {
-    const tracksDeleted = await Track.deleteMany({name: req.query.name.toString()});
+    const tracksDeleted = await Track.deleteMany({nombre: req.query.nombre.toString()});
 
     if (!tracksDeleted.acknowledged) {
       return res.status(500).send({error: "No se pudo borrar la ruta"});
@@ -81,11 +81,11 @@ trackRouter.delete('/:id', async (req, res) => {
 //* Actualizar por nombre
 trackRouter.patch('/', async (req, res) => {
   //! comprobar que se esta añadiendo un nombre
-  if (!req.query.name) {
+  if (!req.query.nombre) {
     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder actualizarla"});
   }
 
-  const allowedUpdates = ['name', 'coordenadas_inicio_ruta', 'coordenada_fin_ruta', 'longitud', 'desnivel', 'tipo_actividad', 'calificacion_media'];
+  const allowedUpdates = ['nombre', 'coordenadas_inicio_ruta', 'coordenada_fin_ruta', 'longitud', 'desnivel', 'tipo_actividad', 'calificacion_media'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
@@ -94,7 +94,7 @@ trackRouter.patch('/', async (req, res) => {
   }
 
   try {
-    const trackUpdated = await Track.findOneAndUpdate({name: req.query.name.toString()}, req.body, {new: true, runValidators: true});
+    const trackUpdated = await Track.findOneAndUpdate({nombre: req.query.nombre.toString()}, req.body, {new: true, runValidators: true});
 
     if (trackUpdated) {
       return res.status(200).send(trackUpdated);
@@ -108,7 +108,7 @@ trackRouter.patch('/', async (req, res) => {
 
 //* Actualizar por id
 trackRouter.patch('/:id', async (req, res) => {
-  const allowedUpdates = ['name', 'coordenadas_inicio_ruta', 'coordenada_fin_ruta', 'longitud', 'desnivel', 'tipo_actividad', 'calificacion_media'];
+  const allowedUpdates = ['nombre', 'coordenadas_inicio_ruta', 'coordenada_fin_ruta', 'longitud', 'desnivel', 'tipo_actividad', 'calificacion_media'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 

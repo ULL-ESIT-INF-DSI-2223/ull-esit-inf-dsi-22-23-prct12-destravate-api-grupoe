@@ -1,11 +1,13 @@
 import express from 'express';
 import './server.js';
 import { trackRouter } from './track.js'
-
+import { userRouter } from './user.js'
+ 
 export const server = express();
 server.use(express.json());
 
 server.use('/tracks',trackRouter)
+server.use('/users',userRouter)
 
 //! MANEJO DE ERRORES
 server.post('*', (_, res) => {

@@ -1,37 +1,45 @@
 import { Document, model, Schema } from 'mongoose';
+import { TrackDocumentInterface } from './track.js';
 
 interface UserDocumentInterface extends Document {
-  id_usuario: number;
   nombre: string;
-  actividades: 'Correr' | 'Bicicleta';
-  amigos: string[];
-  grupos: string[];
+  actividad: 'Correr' | 'Bicicleta';
+  amigos: UserDocumentInterface[];
+  grupos: {
+    nombreGrupo: string;
+    miembros: UserDocumentInterface[];
+  }[];
   estadisticas: string;
-  rutas_favoritas: string[];
-  retos_activos: string[];
-  historico_rutas: string[];
+  rutas_favoritas: TrackDocumentInterface[];
+  //retos_activos: string[];
+  historico_rutas: {
+    fecha: string;
+    rutas: TrackDocumentInterface[];
+  }[];
 }
 
 const UserSchema = new Schema({
-  id_usuario: { 
-    type: Number,
-    required: true,
-    unique: true,
-  },
   nombre: {
     type: String,
     required: true,
   },
-  actividades: {
+  actividad: {
     type: String,
     required: true,
   },
   amigos: {
-    type: [String],
+    type: [Schema.Types.ObjectId],
+    ref: 'User',
     // required: true,
   },
   grupos: {
-    type: [String],
+    type: [{
+      nombreGrupo: String,
+      miembros: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      }],
+    }]
     // required: true,
   },
   estadisticas: {
@@ -44,18 +52,25 @@ const UserSchema = new Schema({
     }
   },
   rutas_favoritas: {
-    type: [String],
+    type: [Schema.Types.ObjectId],
+    ref: 'Track',
     // required: true,
   },
-  retos_activos: {
-    type: [String],
-    // required: true,
-  },
+  //! Hay que esperar a tener el model de challenge listo
+  // retos_activos: {
+  //   type: [Schema.Types.ObjectId],
+  //   // required: true,
+  // },
   historico_rutas: {
-    type: [String],
-    // required: true,
+    type: [{
+      fecha: String,
+      
+      rutas: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Track',
+      }]
+    }],
   },
-
 });
 
 export const User = model<UserDocumentInterface>('User', UserSchema);

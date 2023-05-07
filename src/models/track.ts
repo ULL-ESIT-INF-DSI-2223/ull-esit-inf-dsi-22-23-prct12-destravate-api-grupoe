@@ -1,7 +1,7 @@
 import { Document, model, Schema } from 'mongoose';
 
-interface TrackDocumentInterface extends Document {
-  name: string;
+export interface TrackDocumentInterface extends Document {
+  nombre: string;
   coordenadas_inicio_ruta: string;
   coordenada_fin_ruta: string;
   longitud: number;
@@ -12,7 +12,7 @@ interface TrackDocumentInterface extends Document {
 }
 
 const TrackSchema = new Schema<TrackDocumentInterface>({
-  name: { 
+  nombre: { 
     type: String,
     required: true,
     unique: true
