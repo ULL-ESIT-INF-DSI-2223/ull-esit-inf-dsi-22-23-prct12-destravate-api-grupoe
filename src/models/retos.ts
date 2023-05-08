@@ -15,6 +15,7 @@ const RetoSchema = new Schema({
   nombre: {
     type: String,
     required: true,
+    unique: true,
   },
   actividad: {
     type: String,
@@ -26,8 +27,8 @@ const RetoSchema = new Schema({
     required: true,
   },
   kms: {
-    type: Number,
-    required: true,
+    type: Number, // se calcula al postear el reto
+    //required: true,
   },
   usuarios: {
     type: [Schema.Types.ObjectId],
@@ -36,4 +37,4 @@ const RetoSchema = new Schema({
   }
 });
 
-export const Reto = model<RetoDocumentInterface>('Ruta', RetoSchema);
+export const Reto = model<RetoDocumentInterface>('Challenge', RetoSchema);

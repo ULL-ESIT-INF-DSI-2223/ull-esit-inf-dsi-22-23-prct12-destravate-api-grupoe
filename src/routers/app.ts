@@ -1,5 +1,5 @@
 import express from 'express';
-import './server.js';
+import '../db/mongoose.js';
 import { trackRouter } from './track.js';
 import { userRouter } from './user.js';
 import { retoRouter } from './retos.js';
@@ -9,6 +9,7 @@ server.use(express.json());
 
 server.use('/tracks',trackRouter)
 server.use('/users',userRouter)
+server.use('/challenges',retoRouter)
 
 //! MANEJO DE ERRORES
 server.post('*', (_, res) => {
