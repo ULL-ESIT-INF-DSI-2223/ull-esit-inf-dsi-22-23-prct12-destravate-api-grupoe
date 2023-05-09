@@ -1,8 +1,10 @@
 import { Track } from '../models/track.js';
+import { User } from '../models/user.js';
 import express from 'express';
 
 export const trackRouter = express.Router();
 
+//* AÑADIR RUTA
 trackRouter.post('/', async (req, res) => {
   const track = new Track(req.body);
 
@@ -10,6 +12,7 @@ trackRouter.post('/', async (req, res) => {
     await track.save();
     return res.status(201).send(track);
   } catch (error) {
+    //console.log(error.message.toString());
     return res.status(400).send(error);
   }
 });
@@ -51,11 +54,35 @@ trackRouter.delete('/', async (req, res) => {
   }
 
   try {
-    const tracksDeleted = await Track.deleteMany({nombre: req.query.nombre.toString()});
+    //? ALMACENAMOS LA ID DE LA RUTA PARA FUTURAS ELIMINACIONES EN OTRAS TABLAS
+    const trackDeletedID = await Track.findOne({nombre: req.query.nombre.toString()}).select('id');
+    //console.log(trackDeletedID);
+    ;
 
+    //? BORRAR LA RUTA
+    const tracksDeleted = await Track.deleteMany({nombre: req.query.nombre.toString()});
     if (!tracksDeleted.acknowledged) {
       return res.status(500).send({error: "No se pudo borrar la ruta"});
     }
+
+    //? BORRAR EL TRACK DE LA TABLA USUARIOS
+    //recorrer todos los usuarios de la bbdd
+    const users = await User.find();
+    users.forEach(async (user) => {
+      user.rutas_favoritas.forEach(async (ruta, index) => {
+        if(trackDeletedID !== null) {
+          console.log("RUTA: " + ruta.toString());
+          console.log("ID: " + trackDeletedID.id.toString());
+          if (ruta.toString() === trackDeletedID.id.toString()) {
+            user.rutas_favoritas.splice(index, 1);
+            await user.save();
+          }
+        } else {
+          return res.status(500).send({error: "No se pudo borrar la ruta de la tabla usuarios"});
+        }
+      });
+    });
+    //console.log(users);
 
     return res.status(200).send(tracksDeleted);
   } catch (error) {

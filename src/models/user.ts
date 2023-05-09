@@ -64,7 +64,6 @@ const UserSchema = new Schema({
   historico_rutas: {
     type: [{
       fecha: String,
-      
       rutas: [{
         type: Schema.Types.ObjectId,
         ref: 'Track',

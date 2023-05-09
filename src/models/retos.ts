@@ -15,7 +15,6 @@ const RetoSchema = new Schema({
   nombre: {
     type: String,
     required: true,
-    unique: true,
   },
   actividad: {
     type: String,

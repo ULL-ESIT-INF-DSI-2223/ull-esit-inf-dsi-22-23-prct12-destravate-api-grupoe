@@ -3,13 +3,15 @@ import '../db/mongoose.js';
 import { trackRouter } from './track.js';
 import { userRouter } from './user.js';
 import { retoRouter } from './retos.js';
+import { grupoRouter } from './grupo.js';
  
 export const server = express();
-server.use(express.json());
+server.use(express.json()); // para que nos funcione el body
 
 server.use('/tracks',trackRouter)
 server.use('/users',userRouter)
 server.use('/challenges',retoRouter)
+server.use('/groups',grupoRouter)
 
 //! MANEJO DE ERRORES
 server.post('*', (_, res) => {

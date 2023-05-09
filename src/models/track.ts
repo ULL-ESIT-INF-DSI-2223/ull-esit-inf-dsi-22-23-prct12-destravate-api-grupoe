@@ -15,7 +15,7 @@ const TrackSchema = new Schema<TrackDocumentInterface>({
   nombre: { 
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   coordenadas_inicio_ruta: { 
     type: String, 
