@@ -11,7 +11,6 @@ userRouter.post('/', async (req, res) => {
   const newUser = new User(req.body);
 
   try {
-
     //? comprobar si en la base de datos de usuarios existen esos usuarios
     if (req.body.amigos) {
       //iterar sobre el array de amigos
@@ -56,7 +55,6 @@ userRouter.get('/', async (req, res) => {
 
   try {
     const userToFind = await User.find(filter);
-
     if (userToFind.length !== 0) {
       return res.status(200).send(userToFind);
     }
@@ -90,7 +88,7 @@ userRouter.delete('/', async (req, res) => {
 
     //? ALMACENAMOS EL ID DEl USUARIO QUE QUEREMOS BORRAR
     const userDeletedID = await User.findOne({nombre: req.query.nombre.toString()}).select('id');
-    console.log('User deleted id: ' + userDeletedID);
+    //console.log('User deleted id: ' + userDeletedID);
     
     //? BORRAMOS EL USUARIO
     const userDeleted = await User.deleteOne({nombre: req.query.nombre.toString()});
@@ -201,7 +199,7 @@ userRouter.delete('/:id', async (req, res) => {
 
     //? ALMACENAMOS EL ID DEl USUARIO QUE 
     const userDeletedID = await User.findOne({id: req.params.id.toString()}).select('id');
-    console.log('User deleted id: ' + userDeletedID);
+    //console.log('User deleted id: ' + userDeletedID);
 
     //? BORRAR EL USUARIO
     const userFoundandDeleted = await User.findByIdAndDelete(req.params.id);

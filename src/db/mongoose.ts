@@ -1,7 +1,9 @@
 import { connect } from 'mongoose';
 
-connect('mongodb://127.0.0.1:27017/app').then(() => {
-console.log('Connected to the database');
-}).catch(() => {
-  console.log('Something went wrong when conecting to the database');
-});
+try {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  await connect(process.env.MONGODB_URL!);
+  console.log('Connection to MongoDB server established');
+} catch (error) {
+  console.log(error);
+}

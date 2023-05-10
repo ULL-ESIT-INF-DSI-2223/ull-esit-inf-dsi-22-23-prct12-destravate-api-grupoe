@@ -2,13 +2,14 @@
   "name": "PR12-GrupoE-Destravate",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/routers/app.js",
   "type": "module",
   "scripts": {
-    "start": "tsc-watch --onSuccess \"node dist/routers/app.js\"",
-    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "build": "tsc",
+    "start": "node dist/routers/app.js",
+    "dev": "tsc-watch --onSuccess \"env-cmd -f ./config/dev.env node dist/routers/app.js\"",
     "doc": "typedoc",
-    "test": "mocha",
+    "test": "env-cmd -f ./config/test.env mocha --exit",
     "coverage": "c8 npm test && c8 report --reporter=lcov"
   },
   "keywords": [],

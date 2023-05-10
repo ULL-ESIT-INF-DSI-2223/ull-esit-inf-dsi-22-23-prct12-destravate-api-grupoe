@@ -164,13 +164,22 @@ A continuación, tenemos un fichero por cada modelo, donde se gestionan las peti
 ```ts
   import { connect } from 'mongoose';
 
-  connect('mongodb://127.0.0.1:27017/app').then(() => {
-  console.log('Connected to the database');
-  }).catch(() => {
-    console.log('Something went wrong when conecting to the database');
-  });
+  try {
+    await connect(process.env.MONGODB_URL!);
+    console.log('Connection to MongoDB server established');
+  } catch (error) {
+    console.log(error);
+  }
 ```
 
+Se hace uso de _"MONGODB_URL"_ debido a que se esta haciendo uso de una variable de entorno para diferenciar entre la base de datos de desarrollo y la de producción. Tenemos dichas variables alojadas en un fichero config que se encuentra en el directorio raíz del proyecto.  
+
+A continuación, se muestra el contenido del fichero "dev.env":
+
+```
+PORT=3000
+MONGODB_URL=mongodb://127.0.0.1:27017/app
+```
 
 ### Relaciones entre tablas.
 Esta parte fue la más complicada de implementar, en concreto está relacionada con los delete de las diferentes tablas de la base de datos. Los conflictos que hemos detectado son:  

@@ -96,8 +96,53 @@ grupoRouter.delete('/:id', async (req, res) => {
   }
 });
 
-//* MODIFICAR POR id
+//* Modificar por id
+grupoRouter.patch('/:id', async (req, res) => {
+  const allowedUpdates = ['nombre', 'participantes', 'estadisticasGrupales', 'clasificacion', 'rutas_favoritas', 'historico_rutas'];
+  const actualUpdates = Object.keys(req.body);
+  const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
+  if (!isValidUpdate) {
+    return res.status(400).send({error: "Actualización no permitida"});
+  }
 
+  try {
+    const grupoUpdated = await Grupo.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
 
-//* MODIFICAR POR NOMBRE
+    if (grupoUpdated) {
+      return res.status(200).send(grupoUpdated);
+    }
+
+    return res.status(404).send();
+  } catch (error) {
+    return res.status(400).send(error); 
+  }
+});
+
+//* Modificar por Nombre
+grupoRouter.patch('/', async (req, res) => {
+  //! comprobar que se esta añadiendo un nombre
+  if (!req.query.nombre) {
+    return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder actualizarla"});
+  }
+
+  const allowedUpdates = ['nombre', 'participantes', 'estadisticasGrupales', 'clasificacion', 'rutas_favoritas', 'historico_rutas'];
+  const actualUpdates = Object.keys(req.body);
+  const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
+
+  if (!isValidUpdate) {
+    return res.status(400).send({error: "Actualización no permitida"});
+  }
+
+  try {
+    const gruposUpdated = await Grupo.findOneAndUpdate({nombre: req.query.nombre.toString()}, req.body, {new: true, runValidators: true});
+
+    if (gruposUpdated) {
+      return res.status(200).send(gruposUpdated);
+    }
+
+    return res.status(404).send();
+  } catch (error) {
+    return res.status(400).send(error);  
+  }
+});
