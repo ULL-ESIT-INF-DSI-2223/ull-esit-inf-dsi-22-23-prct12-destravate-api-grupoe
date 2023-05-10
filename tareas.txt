@@ -1,0 +1,4 @@
+Tareas pendientes:
+
+- track --> meter user
+- grupos --> ranking y rutas favoritas

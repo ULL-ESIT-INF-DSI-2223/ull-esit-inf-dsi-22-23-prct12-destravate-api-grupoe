@@ -37,22 +37,22 @@ grupoRouter.post('/', async (req, res) => {
 
     //* calcular rutas favoritas
     // Buscar el número de coincidencias de cada ruta en el histórico de rutas del grupo, para ver la más repetida.
-    // if (grupo.historico_rutas) {
-    //   res.status(400).send({error: "Histórico de rutas del grupo está vacío"});
+    // Si el array de rutas favoritas está vacio devolvemos un error, si no, se recorre y se cuenta las coincidencias.
+    // if (grupo.historico_rutas.length === 0) {
+    //   return res.status(400).send({error: "No se puede calcular la ruta favorita de un grupo sin historico de rutas"});
     // }
     // else {
-    //   const rutasFavoritas = grupo.historico_rutas.reduce((acc, ruta) => {
-    //     if (acc[ruta]) {
-    //       acc[ruta] += 1;
-    //     } else {
-    //       acc[ruta] = 1;
-    //     }
-    //     return acc;
-    //   }, {});
-    //   grupo.rutas_favoritas = Object.keys(rutasFavoritas).sort((a, b) => rutasFavoritas[b] - rutasFavoritas[a]);
+    // recorremos el histórico de rutas, nos quedamos con la que más se repite y la añadimos al array de rutas favoritas.
+      // const frecuencia: { [key: string]: number } = {};
+    
+      // grupo.historico_rutas.forEach((elemento) => {
+      //   if (frecuencia[elemento.rutas.nombre]) {
+      //     frecuencia[elemento.rutas.nombre]++;
+      //   } else {
+      //     frecuencia[elemento.rutas.nombre] = 1;
+      //   }
+      // });    
     // }
-
-    // ! adri prueba eso, me voy luego me dices, revisa si puedes si la clasificacion y las rutas favoritas van.
 
     await grupo.save();
     return res.status(201).send(grupo);
@@ -125,6 +125,8 @@ grupoRouter.delete('/:id', async (req, res) => {
     return res.status(400).send(error);    
   }
 });
+
+
 
 //? modificar --> comprobar que el usuario a modificar está en el grupo.
 

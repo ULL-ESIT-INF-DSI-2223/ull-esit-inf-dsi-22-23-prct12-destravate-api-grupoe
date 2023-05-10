@@ -1,4 +1,5 @@
 import { User } from '../models/user.js';
+import { Reto } from '../models/retos.js';
 import express from 'express';
 
 export const userRouter = express.Router();
@@ -78,27 +79,78 @@ userRouter.get('/:id', async (req, res) => {
 });
 
 //* Borrar usuario por nombre:
+
 userRouter.delete('/', async (req, res) => { 
   if (!req.query.nombre) {
     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder borrarla"});
   }
 
   try {
-    const userDeleted = await User.deleteMany({nombre: req.query.nombre.toString()});
 
+    //? ALMACENAMOS EL ID DE LA RUTA QUE QUEREMOS BORRAR
+    const userDeletedID = await User.find({nombre: req.query.nombre.toString()});
+
+    //? BORRAMOS EL USUARIO
+    const userDeleted = await User.deleteMany({nombre: req.query.nombre.toString()});
     if (!userDeleted.acknowledged) {
       return res.status(500).send({error: "No se pudo borrar el usuario, no existe en la base de datos"});
     }
 
-    return res.status(200).send(userDeleted);
+    //? BORRAMOS LOS RETOS QUE TENGA ESE USUARIO
+    const retos = await Reto.find();
+    retos.forEach(async (reto) => {
+      reto.usuarios.forEach(async (usuario, index) => {
+        if (userDeletedID !== null) {
+          if (usuario.toString() === userDeletedID[0]._id.toString()) {
+            // borrar el usuario del reto
+            reto.usuarios.splice(index,1);
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+        }
+      });
+
+    });
+
+
   } catch (error) {
     return res.status(400).send(error);
   }
+
+
 });
+
+
+// userRouter.delete('/', async (req, res) => { 
+//   if (!req.query.nombre) {
+//     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder borrarla"});
+//   }
+
+//   try {
+//     const userDeleted = await User.deleteMany({nombre: req.query.nombre.toString()});
+
+//     if (!userDeleted.acknowledged) {
+//       return res.status(500).send({error: "No se pudo borrar el usuario, no existe en la base de datos"});
+//     }
+
+//     return res.status(200).send(userDeleted);
+//   } catch (error) {
+//     return res.status(400).send(error);
+//   }
+// });
+
+
+
+
+
 
 //* Borrar usuario por ID
 userRouter.delete('/:id', async (req, res) => {
   try {
+  
+    //* FALTA POR HACER
+      // return res.status(200).send(tracksDeleted);
     const userFoundandDeleted = await User.findByIdAndDelete(req.params.id);
 
     if (!userFoundandDeleted) {
@@ -110,6 +162,19 @@ userRouter.delete('/:id', async (req, res) => {
     return res.status(400).send(error);    
   }
 });
+// userRouter.delete('/:id', async (req, res) => {
+//   try {
+//     const userFoundandDeleted = await User.findByIdAndDelete(req.params.id);
+
+//     if (!userFoundandDeleted) {
+//       return res.status(400).send({error: "No se encontró el usuario con ese id en la base de datos"});
+//     }
+
+//     return res.status(200).send(userFoundandDeleted);
+//   } catch(error) {
+//     return res.status(400).send(error);    
+//   }
+// });
 
 //* Modificar usuario por nombre
 userRouter.patch('/', async (req, res) => {

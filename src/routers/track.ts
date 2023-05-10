@@ -57,23 +57,25 @@ trackRouter.delete('/', async (req, res) => {
     //? ALMACENAMOS LA ID DE LA RUTA PARA FUTURAS ELIMINACIONES EN OTRAS TABLAS
     const trackDeletedID = await Track.findOne({nombre: req.query.nombre.toString()}).select('id');
     //console.log(trackDeletedID);
-    ;
-
+    
     //? BORRAR LA RUTA
     const tracksDeleted = await Track.deleteMany({nombre: req.query.nombre.toString()});
     if (!tracksDeleted.acknowledged) {
       return res.status(500).send({error: "No se pudo borrar la ruta"});
     }
-
+    
     //? BORRAR EL TRACK DE LA TABLA USUARIOS
     //recorrer todos los usuarios de la bbdd
     const users = await User.find();
     users.forEach(async (user) => {
+      //console.log(user.rutas_favoritas);
       user.rutas_favoritas.forEach(async (ruta, index) => {
+        //console.log(ruta.id.troString());
         if(trackDeletedID !== null) {
           console.log("RUTA: " + ruta.toString());
           console.log("ID: " + trackDeletedID.id.toString());
           if (ruta.toString() === trackDeletedID.id.toString()) {
+            console.log("ENTRA");
             user.rutas_favoritas.splice(index, 1);
             await user.save();
           }
@@ -83,6 +85,7 @@ trackRouter.delete('/', async (req, res) => {
       });
     });
     //console.log(users);
+
 
     return res.status(200).send(tracksDeleted);
   } catch (error) {
