@@ -1,5 +1,6 @@
 import { Track } from '../models/track.js';
 import { User } from '../models/user.js';
+import { Reto } from '../models/retos.js';
 import express from 'express';
 
 export const trackRouter = express.Router();
@@ -64,7 +65,7 @@ trackRouter.delete('/', async (req, res) => {
       return res.status(500).send({error: "No se pudo borrar la ruta"});
     }
     
-    //? BORRAR EL TRACK DE LA TABLA USUARIOS
+    //? BORRAR EL TRACK DE LA TABLA USUARIOS --> DE LAS RUTAS FAVORITAS
     //recorrer todos los usuarios de la bbdd
     const users = await User.find();
     users.forEach(async (user) => {
@@ -72,10 +73,10 @@ trackRouter.delete('/', async (req, res) => {
       user.rutas_favoritas.forEach(async (ruta, index) => {
         //console.log(ruta.id.troString());
         if(trackDeletedID !== null) {
-          console.log("RUTA: " + ruta.toString());
-          console.log("ID: " + trackDeletedID.id.toString());
+          // console.log("RUTA: " + ruta.toString());
+          // console.log("ID: " + trackDeletedID.id.toString());
           if (ruta.toString() === trackDeletedID.id.toString()) {
-            console.log("ENTRA");
+            //console.log("ENTRA");
             user.rutas_favoritas.splice(index, 1);
             await user.save();
           }
@@ -83,9 +84,40 @@ trackRouter.delete('/', async (req, res) => {
           return res.status(500).send({error: "No se pudo borrar la ruta de la tabla usuarios"});
         }
       });
-    });
-    //console.log(users);
 
+      //? BORRAR LA ID DEL TRACK DEL HISTORICO DE RUTAS DE LOS USUARIOS
+      user.historico_rutas.forEach(async (ruta, index) => {
+        if(trackDeletedID !== null) {
+          ruta.rutas.forEach(async (ruta2, index2) => {
+            if (ruta2.toString() === trackDeletedID.id.toString()) {
+              ruta.rutas.splice(index2, 1);
+              await user.save();
+            }
+          });
+        } else {
+          return res.status(500).send({error: "No se pudo borrar la ruta de la tabla usuarios"});
+        }
+      });
+    });
+
+    //? BORRAR TRACK DE LA TABLA RETOS
+    const retos = await Reto.find();
+    retos.forEach(async (reto) => {
+      reto.rutas.forEach(async (ruta, index) => {
+        if(trackDeletedID !== null) {
+          if (ruta.toString() === trackDeletedID.id.toString()) {
+            reto.rutas.splice(index, 1);
+          }
+        } else {
+          return res.status(500).send({error: "No se pudo borrar la ruta de la tabla retos"});
+        }
+      });
+      await reto.save();
+    });
+
+    //?? BORRAR EL TRACK DE LA TABLA GRUPOS --> RUTAS FAV
+
+    //? BORRAR EL TRACK DE LA TABLA GRUPOS --> RUTAS REALIZADAS
 
     return res.status(200).send(tracksDeleted);
   } catch (error) {
@@ -110,12 +142,11 @@ trackRouter.delete('/:id', async (req, res) => {
 
 //* Actualizar por nombre
 trackRouter.patch('/', async (req, res) => {
-  //! comprobar que se esta añadiendo un nombre
   if (!req.query.nombre) {
     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder actualizarla"});
   }
 
-  const allowedUpdates = ['nombre', 'coordenadas_inicio_ruta', 'coordenada_fin_ruta', 'longitud', 'desnivel', 'tipo_actividad', 'calificacion_media'];
+  const allowedUpdates = ['nombre', 'coordenadas_inicio_ruta', 'coordenada_fin_ruta', 'longitud', 'desnivel', 'usuarios', 'tipo_actividad', 'calificacion_media'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
@@ -138,7 +169,7 @@ trackRouter.patch('/', async (req, res) => {
 
 //* Actualizar por id
 trackRouter.patch('/:id', async (req, res) => {
-  const allowedUpdates = ['nombre', 'coordenadas_inicio_ruta', 'coordenada_fin_ruta', 'longitud', 'desnivel', 'tipo_actividad', 'calificacion_media'];
+  const allowedUpdates = ['nombre', 'coordenadas_inicio_ruta', 'coordenada_fin_ruta', 'longitud', 'desnivel', 'usuarios', 'tipo_actividad', 'calificacion_media'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 

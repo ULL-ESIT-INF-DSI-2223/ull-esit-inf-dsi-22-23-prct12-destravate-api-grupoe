@@ -2,7 +2,7 @@ import { Document, model, Schema } from 'mongoose';
 import { UserDocumentInterface } from './user.js';	
 import { TrackDocumentInterface } from './track.js';
 
-import validator from 'validator';
+//import validator from 'validator';
 
 
 interface GroupDocumentInterface extends Document {
@@ -17,7 +17,7 @@ interface GroupDocumentInterface extends Document {
     fecha: string;
   }[]; // se calcula con funcion
   rutas_favoritas: {// se calcula con funcion
-    ruta: TrackDocumentInterface;
+    ruta: string;
     numero_veces: number;
   }[];
   historico_rutas: {
@@ -33,57 +33,41 @@ const GrupoSchema = new Schema({
   },
   participantes: {
     type: [{
-      participante: [{
+      participante: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-      }],
-      fecha: String,
-      // validate: {
-      //   validator: (value:string) => {
-      //     validator.default.isDate(value);
-      //   }
-      // }
+      },
+      fecha: String
     }],
-    required: true,
-    unique: true,
   },
   estadisticasGrupales: {
     type: String,
-    required: true,
+    // required: true,
+    validate: (value:string) => {
+      if(!value.match(/^(\d+-\d+,)(\d+-\d+,)(\d+-\d+)$/)) {
+        throw new Error('Asegurese de insertar bien los datos estadisticos, un ejemplo sería: 5-5,10-10,20-20 kms-desnivel/semanales, km-desnivel/mensuales, kms-desnivel/anuales');
+      }
+    }
   },
   clasificacion: {
     type: [{
-      participante: [{
+      participante: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-      }],
-      fecha: String,
-      // validate: {
-      //   validator: (value:string) => {
-      //     validator.default.isDate(value);
-      //   }
-      // }
+      },
+      fecha: String
     }],
-    required: true,
-    unique: true,
   },
   rutas_favoritas: {
     type: [{
-      ruta: Schema.Types.ObjectId,
-      numero_veces: Number,
-    }],
-    ref: 'Track',
-  },
-  historico_rutas: {
-    type: [{
-      fecha: String,
-      rutas: [{
+      ruta: {
         type: Schema.Types.ObjectId,
         ref: 'Track',
-      }]
+      },
+      numero_veces: Number
     }],
+    // required: true,
   },
 });
 
-export const Grupo = model<GroupDocumentInterface>('Grupo', GrupoSchema);
-
+export const Grupo = model<GroupDocumentInterface>('Grupo', GrupoSchema)

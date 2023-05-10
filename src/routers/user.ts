@@ -1,5 +1,7 @@
 import { User } from '../models/user.js';
 import { Reto } from '../models/retos.js';
+import { Grupo } from '../models/grupos.js';
+import { Track } from '../models/track.js';
 import express from 'express';
 
 export const userRouter = express.Router();
@@ -79,7 +81,6 @@ userRouter.get('/:id', async (req, res) => {
 });
 
 //* Borrar usuario por nombre:
-
 userRouter.delete('/', async (req, res) => { 
   if (!req.query.nombre) {
     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder borrarla"});
@@ -88,10 +89,11 @@ userRouter.delete('/', async (req, res) => {
   try {
 
     //? ALMACENAMOS EL ID DEl USUARIO QUE QUEREMOS BORRAR
-    const userDeletedID = await User.find({nombre: req.query.nombre.toString()});
-
+    const userDeletedID = await User.findOne({nombre: req.query.nombre.toString()}).select('id');
+    console.log('User deleted id: ' + userDeletedID);
+    
     //? BORRAMOS EL USUARIO
-    const userDeleted = await User.deleteMany({nombre: req.query.nombre.toString()});
+    const userDeleted = await User.deleteOne({nombre: req.query.nombre.toString()});
     if (!userDeleted.acknowledged) {
       return res.status(500).send({error: "No se pudo borrar el usuario, no existe en la base de datos"});
     }
@@ -101,19 +103,90 @@ userRouter.delete('/', async (req, res) => {
     retos.forEach(async (reto) => {
       reto.usuarios.forEach(async (usuario, index) => {
         if (userDeletedID !== null) {
-          if (usuario.toString() === userDeletedID[0]._id.toString()) {
-            // borrar el usuario del reto
+          if (usuario.toString() === userDeletedID.id.toString()) {
             reto.usuarios.splice(index,1);
+            await reto.save();
           }
         }
         else {
           return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
         }
       });
-
     });
 
+    // ? BORRAMOS DE LOS AMIGOS DE LOS USUARIOS
+    const users = await User.find();
+    users.forEach(async (user) => {
+      user.amigos.forEach(async (amigo, index) => {
+        if (userDeletedID !== null) {
+          if (amigo.toString() === userDeletedID.id.toString()) {
+            user.amigos.splice(index,1);
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+        }
+      });
+      user.grupos.forEach(async (grupo) => {
+        grupo.miembros.forEach(async (miembro, index) => {
+          if (userDeletedID !== null) {
+            if (miembro.toString() === userDeletedID.id.toString()) {
+              grupo.miembros.splice(index,1);
+            }
+          }
+          else {
+            return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+          }
+        });
+      });
+      await user.save();
+    });
 
+    
+    // ? BORRAMOS EL USUARIO DE GRUPOS
+    const grupos = await Grupo.find();
+    grupos.forEach(async (grupo) => {
+      grupo.participantes.forEach(async (miembro, index) => {
+        if (userDeletedID !== null) {
+          if (miembro.participante.toString() === userDeletedID.id.toString()) {
+            grupo.participantes.splice(index,1);
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+        }
+      });
+      grupo.clasificacion.forEach(async (clasificacion, index) => {
+        if (userDeletedID !== null) {
+          if (clasificacion.participante.toString() === userDeletedID.id.toString()) {
+            grupo.clasificacion.splice(index,1);
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"}); 
+        }
+
+      });
+      await grupo.save();
+    });
+
+    //? BORRAR DE LA TABLA TRACK LOS USUARIOS QUE PARTICIPAN EN LA RUTA
+    const tracks = await Track.find();
+    tracks.forEach(async (track) => {
+      track.usuarios.forEach(async (usuario, index) => {
+        if (userDeletedID !== null) {
+          if (usuario.toString() === userDeletedID.id.toString()) {
+            track.usuarios.splice(index,1);
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+        }
+      });
+      await track.save();
+    });
+
+    return res.status(200).send(userDeleted);
   } catch (error) {
     return res.status(400).send(error);
   }
@@ -121,60 +194,114 @@ userRouter.delete('/', async (req, res) => {
 
 });
 
-
-// userRouter.delete('/', async (req, res) => { 
-//   if (!req.query.nombre) {
-//     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder borrarla"});
-//   }
-
-//   try {
-//     const userDeleted = await User.deleteMany({nombre: req.query.nombre.toString()});
-
-//     if (!userDeleted.acknowledged) {
-//       return res.status(500).send({error: "No se pudo borrar el usuario, no existe en la base de datos"});
-//     }
-
-//     return res.status(200).send(userDeleted);
-//   } catch (error) {
-//     return res.status(400).send(error);
-//   }
-// });
-
-
-
-
-
-
 //* Borrar usuario por ID
 userRouter.delete('/:id', async (req, res) => {
-  try {
-  
-    //* FALTA POR HACER
-      // return res.status(200).send(tracksDeleted);
-    const userFoundandDeleted = await User.findByIdAndDelete(req.params.id);
 
+  try {
+
+    //? ALMACENAMOS EL ID DEl USUARIO QUE 
+    const userDeletedID = await User.findOne({id: req.params.id.toString()}).select('id');
+    console.log('User deleted id: ' + userDeletedID);
+
+    //? BORRAR EL USUARIO
+    const userFoundandDeleted = await User.findByIdAndDelete(req.params.id);
     if (!userFoundandDeleted) {
       return res.status(400).send({error: "No se encontró el usuario con ese id en la base de datos"});
     }
+
+    //? BORRAMOS LOS RETOS QUE TENGA ESE USUARIO
+    const retos = await Reto.find();
+    retos.forEach(async (reto) => {
+      reto.usuarios.forEach(async (usuario, index) => {
+        if (userDeletedID !== null) {
+          if (usuario.toString() === userDeletedID.id.toString()) {
+            reto.usuarios.splice(index,1);
+            await reto.save();
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+        }
+      });
+    });
+
+    // ? BORRAMOS DE LOS AMIGOS DE LOS USUARIOS
+    const users = await User.find();
+    users.forEach(async (user) => {
+      user.amigos.forEach(async (amigo, index) => {
+        if (userDeletedID !== null) {
+          if (amigo.toString() === userDeletedID.id.toString()) {
+            user.amigos.splice(index,1);
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+        }
+      });
+      user.grupos.forEach(async (grupo) => {
+        grupo.miembros.forEach(async (miembro, index) => {
+          if (userDeletedID !== null) {
+            if (miembro.toString() === userDeletedID.id.toString()) {
+              grupo.miembros.splice(index,1);
+            }
+          }
+          else {
+            return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+          }
+        });
+      });
+      await user.save();
+    });
+
+    
+    // ? BORRAMOS EL USUARIO DE GRUPOS
+    const grupos = await Grupo.find();
+    grupos.forEach(async (grupo) => {
+      grupo.participantes.forEach(async (miembro, index) => {
+        if (userDeletedID !== null) {
+          if (miembro.participante.toString() === userDeletedID.id.toString()) {
+            grupo.participantes.splice(index,1);
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+        }
+      });
+      grupo.clasificacion.forEach(async (clasificacion, index) => {
+        if (userDeletedID !== null) {
+          if (clasificacion.participante.toString() === userDeletedID.id.toString()) {
+            grupo.clasificacion.splice(index,1);
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"}); 
+        }
+
+      });
+      await grupo.save();
+    });
+
+    //? BORRAR DE LA TABLA TRACK LOS USUARIOS QUE PARTICIPAN EN LA RUTA
+    const tracks = await Track.find();
+    tracks.forEach(async (track) => {
+      track.usuarios.forEach(async (usuario, index) => {
+        if (userDeletedID !== null) {
+          if (usuario.toString() === userDeletedID.id.toString()) {
+            track.usuarios.splice(index,1);
+          }
+        }
+        else {
+          return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+        }
+      });
+      await track.save();
+    });
 
     return res.status(200).send(userFoundandDeleted);
   } catch(error) {
     return res.status(400).send(error);    
   }
 });
-// userRouter.delete('/:id', async (req, res) => {
-//   try {
-//     const userFoundandDeleted = await User.findByIdAndDelete(req.params.id);
-
-//     if (!userFoundandDeleted) {
-//       return res.status(400).send({error: "No se encontró el usuario con ese id en la base de datos"});
-//     }
-
-//     return res.status(200).send(userFoundandDeleted);
-//   } catch(error) {
-//     return res.status(400).send(error);    
-//   }
-// });
 
 //* Modificar usuario por nombre
 userRouter.patch('/', async (req, res) => {

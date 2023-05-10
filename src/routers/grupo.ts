@@ -10,17 +10,6 @@ grupoRouter.post('/', async (req, res) => {
 
   try {
 
-    //? Comprobar que los participantes que se insertan existen.
-    if (req.body.participantes) {
-      while (req.body.participantes.length) {
-        const usuario = req.body.participantes.shift();
-        const user = await User.findById(usuario);
-        if (!user) {
-          return res.status(400).send({error: "Alguno de los participantes no existe en la bbdd"});
-        }
-      }
-    }
-
     //* calcular ranking
     // Como asumimos que todos los participantes del grupo realizan todas las rutas planificadas, simplmente ordenamos los usuarios
     // por su fecha de llegada al grupo.
@@ -34,25 +23,6 @@ grupoRouter.post('/', async (req, res) => {
       }
       return 0;
     });
-
-    //* calcular rutas favoritas
-    // Buscar el número de coincidencias de cada ruta en el histórico de rutas del grupo, para ver la más repetida.
-    // Si el array de rutas favoritas está vacio devolvemos un error, si no, se recorre y se cuenta las coincidencias.
-    // if (grupo.historico_rutas.length === 0) {
-    //   return res.status(400).send({error: "No se puede calcular la ruta favorita de un grupo sin historico de rutas"});
-    // }
-    // else {
-    // recorremos el histórico de rutas, nos quedamos con la que más se repite y la añadimos al array de rutas favoritas.
-      // const frecuencia: { [key: string]: number } = {};
-    
-      // grupo.historico_rutas.forEach((elemento) => {
-      //   if (frecuencia[elemento.rutas.nombre]) {
-      //     frecuencia[elemento.rutas.nombre]++;
-      //   } else {
-      //     frecuencia[elemento.rutas.nombre] = 1;
-      //   }
-      // });    
-    // }
 
     await grupo.save();
     return res.status(201).send(grupo);
@@ -126,10 +96,8 @@ grupoRouter.delete('/:id', async (req, res) => {
   }
 });
 
-
-
-//? modificar --> comprobar que el usuario a modificar está en el grupo.
-
 //* MODIFICAR POR id
+
+
 
 //* MODIFICAR POR NOMBRE
