@@ -87,7 +87,7 @@ userRouter.delete('/', async (req, res) => {
 
   try {
 
-    //? ALMACENAMOS EL ID DE LA RUTA QUE QUEREMOS BORRAR
+    //? ALMACENAMOS EL ID DEl USUARIO QUE QUEREMOS BORRAR
     const userDeletedID = await User.find({nombre: req.query.nombre.toString()});
 
     //? BORRAMOS EL USUARIO
