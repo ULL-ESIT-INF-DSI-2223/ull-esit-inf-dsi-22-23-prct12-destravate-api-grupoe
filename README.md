@@ -6,11 +6,11 @@
 [3.Enunciado del proyecto](#enunciado-del-proyecto)   
 [4.Mongoose](#mongoose)   
 [5.Código fuente](#código-fuente)
-[6.Relaciones entre tablas](#relaciones-entre-tablas)     
-[7.Tests](#tests)   
-[8.Despliegue](#despliegue)   
-
-
+[6.Relaciones entre tablas](#relaciones-entre-tablas)   
+[7.Dificultades](#dificultades)  
+[8.Tests](#tests)   
+[9.Despliegue](#despliegue)  
+[10.Referencias]() 
 
 ### Autores  
  - Eva Martínez Bencomo (alu0101396385@ull.edu.es)  
@@ -18,7 +18,7 @@
  - Marco Antonio Barroso Hormiga (alu0101386560@ull.edu.es)
 
 ### Introducción  
-En esta práctica, la segunda grupal de la asignatura, tendrá que implementar un API REST, haciendo uso de Node/Express, que permita llevar a cabo operaciones de creación, lectura, modificación y borrado (Create, Read, Update, Delete - CRUD) de un registro de actividades deportivas.  
+En esta práctica, la segunda grupal de la asignatura, se tendrá que implementar un API REST, haciendo uso de Node.js y Express, que permita llevar a cabo operaciones de creación, lectura, modificación y borrado (Create, Read, Update, Delete - CRUD) de un registro de actividades deportivas.  
 
 ### Enunciado del proyecto  
 *Track*  
@@ -63,10 +63,7 @@ La operación de lectura o consulta podrá llevarse a cabo de dos maneras difere
 
 ### Mongoose  
 
-**********************
-////// EXPLICAR //////
-**********************
-
+En lugar de usar el módulo MongoDB hicimos uso de Mongoose, que es un ODM (Object Data Modeling) para MongoDB y Node.js. Es decir, nos permite validar y preparar nuestros datos antes de que pasen a ser almacenados a la base de datos creada
 
 ### Código fuente  
 
@@ -154,10 +151,15 @@ A continuación, tenemos un fichero por cada modelo, donde se gestionan las peti
   });
 ```
 
-************************
-/////// EXPLICAR /////// --> tener en cuenta el tema de async await y explicar detalladamente.
-************************
+Ha sido una práctica bastante extensa, para no poner todo el código en el informe, consideramos mejor explicar que se ha desarrollado para las peticiones en cada uno de los ficheros del directorio _routers_. 
 
+Para cada uno de los modelos, se ha desarrollado un fichero con el nombre del modelo en plural, donde se encuentran las diferentes peticiones.
+
+Comenzamos con el post, en el cual se crea un nuevo objeto del modelo correspondiente con los datos que se han recibido en la body de la peticion. En todas se introducen los valores definidos en el schema, menos en grupo que las calificaciones son calculadas a partir de los miembros del grupo.  
+
+El getter, se ha desarrollado de manera que se puede solicitar un elemento mediante el nombre del mismo en la query de la peticiónm, o pasando el id como parámetro. De manera similar sucede en el borrar y el modificar.
+
+Asimismo, mencionar que en el caso de los usuarios y en rutas, se ha sido muy meticuloso en el borrado ya que como son atributos de los schemas de otras tablas se gestiona aqui que si al borrar un elemento que se encuentre en otra tabla, vease el caso de un usuario que se encuentra en la tabla de amigos de otro usuario, se borre de la misma.
 
 3. *db*: Contiene un fichero relacionado con la conexión a la base de datos.  
 
@@ -197,10 +199,22 @@ Esta parte fue la más complicada de implementar, en concreto está relacionada 
 *Grupos*  --> Si se borra un grupo, entonces:  
   - Se debe borrar dicho grupo de los usuarios, en concreto se deberá actualizar los grupos de los usuarios que pertenecían a dicho grupo.
 
+### Dificultades
+Las mayores dificultades que hemos tenido en el desarrollo de la API han sido en primer lugar, el tema de las relaciones entre tablas, ya que no teníamos muy claro como hacerlo. Ya que eran numerosas relaciones y habia que ser muy meticuloso a la hora de desarrollar el borrado de algún elemento. Nos facilito el hecho de organizar en un papel todas las relaciones y ver que elementos se veían afectados por el borrado de un elemento.
 
-
-
-
+Asimismo hemos tenido dificultades con el tema de los tests, ya que era la primera vez que los hacíamos y no sabíamos muy bien como implementarlos. Hemos hecho uso de la librería "supertest" para realizar los tests de la API.
 
 ### Tests  
 ### Despliegue  
+
+### Referencias
+
+- [Guion de la practica](https://ull-esit-inf-dsi-2223.github.io/prct12-destravate-api/)
+
+- [Apuntes de la asignatura](https://ull-esit-inf-dsi-2223.github.io/nodejs-theory/)
+
+- [Express](https://expressjs.com/es/)
+
+- [Mongoose](https://mongoosejs.com/)
+
+- [MongoDB](https://www.mongodb.com/)
