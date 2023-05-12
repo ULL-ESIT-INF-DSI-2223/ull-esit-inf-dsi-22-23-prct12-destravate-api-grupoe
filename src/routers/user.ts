@@ -198,9 +198,10 @@ userRouter.delete('/:id', async (req, res) => {
   try {
 
     //? ALMACENAMOS EL ID DEl USUARIO QUE 
-    const userDeletedID = await User.findOne({id: req.params.id.toString()}).select('id');
-    //console.log('User deleted id: ' + userDeletedID);
-
+    // const userDeletedID = await User.findOne({id: req.params.id.toString()}).select('id');
+    // console.log('User deleted id: ' + req.params.id.toString());
+    const userDeletedID = await User.findById(req.params.id);
+    
     //? BORRAR EL USUARIO
     const userFoundandDeleted = await User.findByIdAndDelete(req.params.id);
     if (!userFoundandDeleted) {

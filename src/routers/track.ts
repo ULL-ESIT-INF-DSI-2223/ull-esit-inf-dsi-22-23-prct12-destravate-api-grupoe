@@ -14,7 +14,6 @@ trackRouter.post('/', async (req, res) => {
     await track.save();
     return res.status(201).send(track);
   } catch (error) {
-    //console.log(error.message.toString());
     return res.status(400).send(error);
   }
 });

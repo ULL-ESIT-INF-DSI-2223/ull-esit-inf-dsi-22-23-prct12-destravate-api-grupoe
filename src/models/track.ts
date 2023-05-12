@@ -31,7 +31,7 @@ const TrackSchema = new Schema<TrackDocumentInterface>({
   coordenada_fin_ruta: { 
     type: String, 
     required: true,
-    validate: (value:string) => { //x:<n>,y:<n>,z:<n>
+    validate: (value:string) => {
       if(!value.match(/^-?\d{1,3}(?:\.\d+)?,\s?-?\d{1,3}(?:\.\d+)?$/)) {
         throw new Error('Coordenadas no válidas, asegurese de que introdujo correctamente los datos');
       }
