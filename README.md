@@ -1,5 +1,11 @@
 # Práctica 12 - Destravate: API Node/Express
 
+[![Coverage Status](https://coveralls.io/repos/github/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoe/badge.svg?branch=main)](https://coveralls.io/github/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoe?branch=main)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ULL-ESIT-INF-DSI-2223_ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoe&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ULL-ESIT-INF-DSI-2223_ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoe)
+
+[![Tests](https://github.com/Marcant97/P13-DSI/actions/workflows/node.js.yml/badge.svg)](https://github.com/Marcant97/P13-DSI/actions/workflows/node.js.yml)
+
 ## Índice
 [1.Autores](#autores)  
 [2.Introducción](#introducción)   
