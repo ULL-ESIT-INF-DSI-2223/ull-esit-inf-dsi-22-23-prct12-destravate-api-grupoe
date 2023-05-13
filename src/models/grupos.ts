@@ -4,7 +4,9 @@ import { TrackDocumentInterface } from './track.js';
 
 //import validator from 'validator';
 
-
+/**
+ * @Description Interfaz que extiende Document para el desarrollo del modelo Grupo
+ */
 interface GroupDocumentInterface extends Document {
   nombre: string;
   participantes: {
