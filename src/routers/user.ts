@@ -6,7 +6,10 @@ import express from 'express';
 
 export const userRouter = express.Router();
 
-//*Añadir un usuario
+/**
+ * @Description post de usuario
+ * @Description Inserta en la base de datos un usuario
+ */
 userRouter.post('/', async (req, res) => {
   const newUser = new User(req.body);
 
@@ -49,7 +52,10 @@ userRouter.post('/', async (req, res) => {
   }
 });
 
-//* Obtener usuarios por nombre
+/**
+ * @Description get de usuario
+ * @Description Obtiene los datos de un usuario filtrando por su nombre
+ */
 userRouter.get('/', async (req, res) => { 
   const filter = req.query.nombre?{nombre: req.query.nombre.toString()}:{};
 
@@ -64,7 +70,10 @@ userRouter.get('/', async (req, res) => {
   }
 });
 
-//* obtener Usuarios por id
+/**
+ * @Description get de usuario
+ * @Description Obtiene los datos de un usuario filtrando por su id
+ */
 userRouter.get('/:id', async (req, res) => {
   try {
     const userToFInd = await User.findById(req.params.id);
@@ -78,7 +87,10 @@ userRouter.get('/:id', async (req, res) => {
   }
 });
 
-//* Borrar usuario por nombre:
+/**
+ * @Description delete de usuario
+ * @Description borra los datos de un usuario filtrando por su nombre
+ */
 userRouter.delete('/', async (req, res) => { 
   if (!req.query.nombre) {
     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder borrarla"});
@@ -195,7 +207,10 @@ userRouter.delete('/', async (req, res) => {
 
 });
 
-//* Borrar usuario por ID
+/**
+ * @Description delete de usuario
+ * @Description borra los datos de un usuario filtrando por su id
+ */
 userRouter.delete('/:id', async (req, res) => {
 
   try {

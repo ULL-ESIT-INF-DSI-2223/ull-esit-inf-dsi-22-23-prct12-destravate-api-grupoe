@@ -6,7 +6,10 @@ import express from 'express';
 
 export const trackRouter = express.Router();
 
-//* AÑADIR RUTA
+/**
+ * @Description post de ruta
+ * @Description Inserta en la base de datos ua ruta
+ */
 trackRouter.post('/', async (req, res) => {
   const track = new Track(req.body);
 
@@ -18,7 +21,10 @@ trackRouter.post('/', async (req, res) => {
   }
 });
 
-//* BUSCAR POR NOMBRE
+/**
+ * @Description get de ruta
+ * @Description Obtiene los datos de una ruta filtrando por su nombre
+ */
 trackRouter.get('/', async (req, res) => {
   const filter = req.query.nombre?{nombre: req.query.nombre.toString()}:{};
 
@@ -34,7 +40,10 @@ trackRouter.get('/', async (req, res) => {
   }
 });
 
-//* BUSCAR POR ID
+/**
+ * @Description get de ruta
+ * @Description Obtiene los datos de una ruta filtrando por su id
+ */
 trackRouter.get('/:id', async (req, res) => {
   try {
     const tracks = await Track.findById(req.params.id);

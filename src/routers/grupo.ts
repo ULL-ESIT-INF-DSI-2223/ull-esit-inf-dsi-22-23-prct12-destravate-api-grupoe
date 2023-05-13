@@ -4,7 +4,10 @@ import { User } from '../models/user.js';
 
 export const grupoRouter = express.Router();
 
-//* Añadir 
+/**
+ * @Description post de grupo 
+ * @Description Inserta en la base de datos un grupo
+ */
 grupoRouter.post('/', async (req, res) => {
   const grupo = new Grupo(req.body);
 
@@ -31,7 +34,10 @@ grupoRouter.post('/', async (req, res) => {
   }
 });
 
-//* GET POR NOMBRE
+/**
+ * @Description get de grupo 
+ * @Description Obtiene los datos de un grupo filtrando por su nombre
+ */
 grupoRouter.get('/', async (req, res) => { 
   const filter = req.query.nombre?{nombre: req.query.nombre.toString()}:{};
 
@@ -47,7 +53,10 @@ grupoRouter.get('/', async (req, res) => {
   }
 });
 
-//* GET POR ID
+/**
+ * @Description get de grupo 
+ * @Description Obtiene los datos de un grupo filtrando por su id
+ */
 grupoRouter.get('/:id', async (req, res) => {
   try {
     const groupToFInd = await Grupo.findById(req.params.id);

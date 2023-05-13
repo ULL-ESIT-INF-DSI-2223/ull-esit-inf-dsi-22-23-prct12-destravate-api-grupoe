@@ -1,6 +1,9 @@
 import { Document, model, Schema } from 'mongoose';
 import { TrackDocumentInterface } from './track.js';
 
+/**
+ * @Description Interfaz que extiende Document para el desarrollo del modelo Usuario
+ */
 export interface UserDocumentInterface extends Document {
   nombre: string;
   actividad: 'Correr' | 'Bicicleta';
@@ -18,6 +21,16 @@ export interface UserDocumentInterface extends Document {
   }[];
 }
 
+/**
+ * @Description Esquema de Grupo
+ * @Param nombre
+ * @Param actividad
+ * @Param amigos
+ * @Param grupos
+ * @Param estadisticas
+ * @Param rutas_favoritas
+ * @Param historico_rutas
+ */
 const UserSchema = new Schema({
   nombre: {
     type: String,
@@ -72,4 +85,7 @@ const UserSchema = new Schema({
   },
 });
 
+/**
+ * @Description Modelo de Usuario
+ */
 export const User = model<UserDocumentInterface>('User', UserSchema);

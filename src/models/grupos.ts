@@ -28,6 +28,14 @@ interface GroupDocumentInterface extends Document {
   }[]; 
 }
 
+/**
+ * @Description Esquema de Grupo
+ * @Param nombre
+ * @Param participantes
+ * @Param estadisticas
+ * @Param clasificacion
+ * @Param rutas favoritas
+ */
 const GrupoSchema = new Schema({
   nombre: {
     type: String,
@@ -72,4 +80,7 @@ const GrupoSchema = new Schema({
   },
 });
 
+/**
+ * @Description Modelo de Grupo
+ */
 export const Grupo = model<GroupDocumentInterface>('Grupo', GrupoSchema)

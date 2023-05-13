@@ -3,6 +3,9 @@ import { TrackDocumentInterface } from './track.js';
 import { UserDocumentInterface } from './user.js';
 
 
+/**
+ * @Description Interfaz que extiende Document para el desarrollo del modelo Reto
+ */
 interface RetoDocumentInterface extends Document {
   nombre: string;
   actividad: 'Correr' | 'Bicicleta';
@@ -11,6 +14,14 @@ interface RetoDocumentInterface extends Document {
   usuarios: UserDocumentInterface[];
 };
 
+/**
+ * @Description Esquema de Grupo
+ * @Param nombre
+ * @Param actividad
+ * @Param rutas
+ * @Param kms
+ * @Param usuarios
+ */
 const RetoSchema = new Schema({
   nombre: {
     type: String,
@@ -36,4 +47,7 @@ const RetoSchema = new Schema({
   }
 });
 
+/**
+ * @Description Modelo de Reto
+ */
 export const Reto = model<RetoDocumentInterface>('Challenge', RetoSchema);

@@ -2,6 +2,9 @@ import { Document, model, Schema } from 'mongoose';
 import { UserDocumentInterface } from './user.js';
 
 
+/**
+ * @Description Interfaz que extiende Document para el desarrollo del modelo Reto
+ */
 export interface TrackDocumentInterface extends Document {
   nombre: string;
   coordenadas_inicio_ruta: string;
@@ -13,6 +16,17 @@ export interface TrackDocumentInterface extends Document {
   calificacion_media: number;
 }
 
+/**
+ * @Description Esquema de Grupo
+ * @Param nombre
+ * @Param coordenadas_inicio_ruta
+ * @Param coordenada_fin_ruta
+ * @Param longitud
+ * @Param desnivel
+ * @Param usuarios
+ * @Param tipo actividad
+ * @Param clasificacion media
+ */
 const TrackSchema = new Schema<TrackDocumentInterface>({
   nombre: { 
     type: String,
@@ -59,5 +73,8 @@ const TrackSchema = new Schema<TrackDocumentInterface>({
     required: true 
   },
 });
-    
+   
+/**
+ * @Description Modelo de Ruta
+ */
 export const Track = model<TrackDocumentInterface>('Track', TrackSchema);

@@ -4,7 +4,10 @@ import express from 'express';
 
 export const retoRouter = express.Router();
 
-//* Añadir
+/**
+ * @Description post de reto
+ * @Description Inserta en la base de datos un nuevo reto
+ */
 retoRouter.post('/', async (req, res) => {
   const reto = new Reto(req.body);
   
@@ -29,7 +32,10 @@ retoRouter.post('/', async (req, res) => {
   }
 });
 
-//* GET RETOS POR ID
+/**
+ * @Description get de reto
+ * @Description Obtiene los datos de un reto filtrando por su id
+ */
 retoRouter.get('/:id', async (req, res) => {
   try {
     const retoFound = await Reto.findById(req.params.id);
@@ -43,7 +49,10 @@ retoRouter.get('/:id', async (req, res) => {
   }
 });
 
-//* GET RETOS POR NOMBRE
+/**
+ * @Description get de reto
+ * @Description Obtiene los datos de un reto filtrando por su nombre
+ */
 retoRouter.get('/', async (req, res) => {
   const filter = req.query.nombre?{nombre: req.query.nombre.toString()}:{};
 
