@@ -11,12 +11,12 @@ interface GroupDocumentInterface extends Document {
     participante: UserDocumentInterface;
     fecha: string;
   }[];
-  estadisticasGrupales: string; // se calcula con funcion
+  estadisticasGrupales: string; 
   clasificacion: {
     participante: UserDocumentInterface;
     fecha: string;
-  }[]; // se calcula con funcion
-  rutas_favoritas: {// se calcula con funcion
+  }[];
+  rutas_favoritas: {
     ruta: string;
     numero_veces: number;
   }[];

@@ -4,22 +4,14 @@ import { User } from '../src/models/user.js';
 import { Reto } from '../src/models/retos.js';
 import { Grupo } from '../src/models/grupos.js';
 import { Track } from '../src/models/track.js';
+import { expect } from 'chai';
+import { response } from 'express';
 
 
-//! todavía no he metido grupos en la base de datos 336-346, 386-398 --> update
-//! falta en delete por id y por nombre, no tengo retos, grupos... --> delete
-
-// const zeroUser = {
-// 	nombre: "Adrian",
-// 	actividad: "Correr",
-// 	estadisticas: "5-5,10-10,20-20"
-// }
-// const zero2User = {
-// 	nombre: "Roberto",
-// 	actividad: "Bicicleta",
-// 	estadisticas: "5-5,10-10,20-20"
-// }
-
+let id = 0;
+let id2 = 0;
+let id3 = 0;
+let id_track = 0;
 const firstUser = {
 	nombre: "Marco",
 	actividad: "Correr",
@@ -33,22 +25,106 @@ const secondUser = {
 	estadisticas: "5-5,10-10,20-20"
 }
 
-let id = 0;
-
 before (async () => {
-	// guardamos todos los usuarios
-	// const users = await User.find();
-	// users.forEach(async (user) => {
-	// 	if ((user.nombre !== zeroUser.nombre) && (user.nombre !== zero2User.nombre)) {
-	// 		await User.deleteOne({nombre: user.nombre});
-	// 	}
-	// });		
-	await User.deleteMany();
-	const fourthUser = await new User({nombre: "Isidro", actividad: "Correr", estadisticas: "5-5,10-10,20-20"}).save();
-	id = fourthUser._id.toString();
-	// await new User(zeroUser).save();
-	// await new User(zero2User).save();
+
+	const fourthUser = await new User({
+		nombre: "Isidro", 
+		actividad: "Correr", 
+		estadisticas: "5-5,10-10,20-20"
+	}).save();
+	id = fourthUser._id;
+
+	const fourthUser2 = await new User({
+		nombre: "Isidoro", 
+		actividad: "Correr", 
+		estadisticas: "5-5,10-10,20-20"
+	}).save();
+	id3 = fourthUser2._id;
+
+	const trackZero = await new Track({
+    nombre: "Tenerife Ultra Blue Trail 2", 
+    coordenadas_inicio_ruta: "-33.865143, 151.2099",
+    coordenada_fin_ruta: "-33.865143, 151.2099",
+    longitud: 5,
+    desnivel: 5,
+    usuarios: [id,id3],
+    tipo_actividad: "correr",
+    calificacion_media: 7
+  }).save();
+  id_track = trackZero._id;
+
+	const fifthUser = await new User({
+		nombre: "Julian 2", 
+		// amigos: [id],
+		grupos: [
+			{
+				nombreGrupo: "Grupo 1",
+				miembros: [id]
+			}
+		],
+		rutas_favoritas: [id_track],
+		actividad: "Correr", 
+		estadisticas: "5-5,10-10,20-20",
+		historico_rutas: [
+			{
+				fecha: "2021-05-05",
+				rutas: [id_track]
+			}
+		]
+	}).save();
+	id2 = fifthUser._id.toString();
+
+	const grupoOne = await new Grupo({
+    nombre: "Grupo 35",
+    participantes: [
+      {
+        participante: id3,
+        fecha: "2021-05-05"
+      },
+      {
+        participante: id2,
+        fecha: "2022-11-09"
+      }
+    ],
+    estadisticasGrupales: "5-5,10-10,20-20",
+    rutas_favoritas: [
+      {
+        ruta: id_track,
+        numero_veces: 1
+      }
+    ],
+    historico_rutas: [
+      {
+        fecha: "2021-05-05",
+        rutas: [id_track]
+      }
+    ]
+  }).save();
+
+  const retoOne = await new Reto({
+    nombre: "Reto 7",
+    actividad: "Correr",
+    rutas: [id_track],
+    kms: 7,
+    usuarios: [id2, id3]
+  }).save();
+
 });
+
+// nombre: string;
+// actividad: 'Correr' | 'Bicicleta';
+// amigos: UserDocumentInterface[];
+// grupos: {
+// 	nombreGrupo: string;
+// 	miembros: UserDocumentInterface[];
+// }[];
+// estadisticas: string;
+// rutas_favoritas: TrackDocumentInterface[];
+// //retos_activos: string[];
+// historico_rutas: {
+// 	fecha: string;
+// 	rutas: TrackDocumentInterface[];
+// }[];
 
 
 describe('POST /users', () => {
@@ -68,7 +144,7 @@ describe('POST /users', () => {
 		const thirdUser = {
 			nombre: "Nestor",
 			actividad: "Bicicleta",
-			amigos: [id],
+			amigos: [id3],
 			estadisticas: "5-5,10-10,20-20"
 		}
 		await request(server).post('/users').send(thirdUser).expect(201);
@@ -84,10 +160,10 @@ describe('GET /users', () => {
 	it('Obtener usuario inexistente falla', async () => {
 		await request(server).get('/users?nombre=Paco').send().expect(400);
 	});
-	
 
 	it('Obtener usuario existente con id', async () => {
-		await request(server).get('/users/' + id).send().expect(200);
+		const response = await request(server).get('/users/' + id).send().expect(200);
+		expect(response.body).to.include({nombre: "Isidro"});
 	});
 
 	it('Obtener usuario inexistente con id falla', async () => {
@@ -111,15 +187,6 @@ describe('Patch /users', () => {
 		}).expect(200);
 	});
 
-	// it('Actualizar usuario existente con amigos falsos', async () => {
-	// 	await request(server).patch('/users?nombre=Adrian').send({
-	// 		nombre: "Adrian",
-	// 		actividad: "Correr",
-	// 		amigos: ["1234", "1111"],
-	// 		estadisticas: "5-5,10-10,20-20"
-	// 	}).expect(400);
-	// });
-
 	it('Actualizar usuario existente con id', async () => {
 		await request(server).patch('/users/' + id).send({
 			nombre: "Isidro",
@@ -128,19 +195,44 @@ describe('Patch /users', () => {
 		}).expect(200);
 	});
 
-	
+	it('Actualizar usuario con todos los parámetros', async () => {
+		await request(server).patch('/users/' + id2).send({
+			nombre: "Julian 2", 
+			amigos: [id],
+			grupos: [
+				{
+					nombreGrupo: "Grupo 1",
+					miembros: [id]
+				}
+			],
+			rutas_favoritas: [id_track],
+			actividad: "Correr", 
+			estadisticas: "5-5,10-10,20-20",
+			historico_rutas: [
+				{
+					fecha: "2021-05-05",
+					rutas: [id_track]
+				}
+			]
+		}).expect(200);
+	});
+		
 });
-
-
 
 
 describe('Delete /users', () => {
 	it('Borrar usuario existente', async () => {
 		await request(server).delete('/users?nombre=Nestor').send().expect(200);
 	});
+	it('Borrar usuario existente', async () => {
+		await request(server).delete('/users?nombre=Isidoro').send().expect(200);
+	});
+
 	it('Borrar usuario inexistente', async () => {
+		// usuario no existe, devuelve 200 por que deletedcount=0
 		await request(server).delete('/users?nombre=Fernando').send().expect(400);
 	});
+
 	
 	it('Borrar usuario existente con id', async () => {
 		await request(server).delete('/users/'+id).send().expect(200);
@@ -150,4 +242,6 @@ describe('Delete /users', () => {
 		await request(server).delete('/users/1234').send().expect(400);
 	});
 });
+
+
 

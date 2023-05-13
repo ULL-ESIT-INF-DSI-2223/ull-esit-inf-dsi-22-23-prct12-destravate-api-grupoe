@@ -88,7 +88,10 @@ userRouter.delete('/', async (req, res) => {
 
     //? ALMACENAMOS EL ID DEl USUARIO QUE QUEREMOS BORRAR
     const userDeletedID = await User.findOne({nombre: req.query.nombre.toString()}).select('id');
-    //console.log('User deleted id: ' + userDeletedID);
+    if (!userDeletedID) {
+      return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+    }
+    
     
     //? BORRAMOS EL USUARIO
     const userDeleted = await User.deleteOne({nombre: req.query.nombre.toString()});
@@ -183,9 +186,9 @@ userRouter.delete('/', async (req, res) => {
       });
       await track.save();
     });
-
     return res.status(200).send(userDeleted);
   } catch (error) {
+    console.log(error);
     return res.status(400).send(error);
   }
 
@@ -201,6 +204,9 @@ userRouter.delete('/:id', async (req, res) => {
     // const userDeletedID = await User.findOne({id: req.params.id.toString()}).select('id');
     // console.log('User deleted id: ' + req.params.id.toString());
     const userDeletedID = await User.findById(req.params.id);
+    if (!userDeletedID) {
+      return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
+    }
     
     //? BORRAR EL USUARIO
     const userFoundandDeleted = await User.findByIdAndDelete(req.params.id);

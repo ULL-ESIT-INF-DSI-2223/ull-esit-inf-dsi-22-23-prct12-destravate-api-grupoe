@@ -58,6 +58,9 @@ trackRouter.delete('/', async (req, res) => {
     //? ALMACENAMOS LA ID DE LA RUTA PARA FUTURAS ELIMINACIONES EN OTRAS TABLAS
     const trackDeletedID = await Track.findOne({nombre: req.query.nombre.toString()}).select('id');
     //console.log(trackDeletedID);
+    if (!trackDeletedID) {
+      return res.status(400).send({error: "No se encontró un track con ese nombre en la base de datos"});
+    }
     
     //? BORRAR LA RUTA
     const tracksDeleted = await Track.deleteMany({nombre: req.query.nombre.toString()});
@@ -142,12 +145,17 @@ trackRouter.delete('/', async (req, res) => {
 trackRouter.delete('/:id', async (req, res) => {
   try {
     //? ALMACENAMOS LA ID DE LA RUTA PARA FUTURAS ELIMINACIONES EN OTRAS TABLAS
-    const trackDeletedID = await Track.findOne({id: req.params.id.toString()}).select('id');
+    // const trackDeletedID = await Track.findOne({id: req.params.id.toString()}).select('id');
+    const trackDeletedID = req.params.id;
+    if (!trackDeletedID) {
+      return res.status(400).send({error: "No se encontró un track con ese id en la base de datos"});
+    }
 
     const tracksFoundandDeleted = await Track.findByIdAndDelete(req.params.id);
     if (!tracksFoundandDeleted) {
       return res.status(400).send({error: "No se encontró la ruta con ese id"});
     }
+
 
     //? BORRAR EL TRACK DE LA TABLA USUARIOS --> DE LAS RUTAS FAVORITAS
     //recorrer todos los usuarios de la bbdd
@@ -159,7 +167,7 @@ trackRouter.delete('/:id', async (req, res) => {
         if(trackDeletedID !== null) {
           // console.log("RUTA: " + ruta.toString());
           // console.log("ID: " + trackDeletedID.id.toString());
-          if (ruta.toString() === trackDeletedID.id.toString()) {
+          if (ruta.toString() === trackDeletedID.toString()) {
             //console.log("ENTRA");
             user.rutas_favoritas.splice(index, 1);
             await user.save();
@@ -173,7 +181,7 @@ trackRouter.delete('/:id', async (req, res) => {
       user.historico_rutas.forEach(async (ruta, index) => {
         if(trackDeletedID !== null) {
           ruta.rutas.forEach(async (ruta2, index2) => {
-            if (ruta2.toString() === trackDeletedID.id.toString()) {
+            if (ruta2.toString() === trackDeletedID.toString()) {
               ruta.rutas.splice(index2, 1);
               await user.save();
             }
@@ -189,7 +197,7 @@ trackRouter.delete('/:id', async (req, res) => {
     retos.forEach(async (reto) => {
       reto.rutas.forEach(async (ruta, index) => {
         if(trackDeletedID !== null) {
-          if (ruta.toString() === trackDeletedID.id.toString()) {
+          if (ruta.toString() === trackDeletedID.toString()) {
             reto.rutas.splice(index, 1);
           }
         } else {
@@ -205,7 +213,7 @@ trackRouter.delete('/:id', async (req, res) => {
       grupo.historico_rutas.forEach(async (ruta, index) => {
         if(trackDeletedID !== null) {
           ruta.rutas.forEach(async (ruta2, index2) => {
-            if (ruta2.toString() === trackDeletedID.id.toString()) {
+            if (ruta2.toString() === trackDeletedID.toString()) {
               ruta.rutas.splice(index2, 1);
               await grupo.save();
             }
@@ -219,7 +227,7 @@ trackRouter.delete('/:id', async (req, res) => {
 
     return res.status(200).send(tracksFoundandDeleted);
   } catch(error) {
-    return res.status(400).send(error);    
+    return res.status(401).send(error);    
   }
 });
 

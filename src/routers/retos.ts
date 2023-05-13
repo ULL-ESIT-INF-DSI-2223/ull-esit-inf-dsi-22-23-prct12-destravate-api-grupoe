@@ -95,7 +95,6 @@ retoRouter.delete('/:id', async (req, res) => {
 
 //* Modificar por Nombre
 retoRouter.patch('/', async (req, res) => {
-  //! comprobar que se esta añadiendo un nombre
   if (!req.query.nombre) {
     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder actualizarla"});
   }
@@ -114,7 +113,6 @@ retoRouter.patch('/', async (req, res) => {
     if (retosUpdated) {
       return res.status(200).send(retosUpdated);
     }
-
     return res.status(404).send();
   } catch (error) {
     return res.status(400).send(error);  
@@ -137,7 +135,6 @@ retoRouter.patch('/:id', async (req, res) => {
     if (retoUpdated) {
       return res.status(200).send(retoUpdated);
     }
-
     return res.status(404).send();
   } catch (error) {
     return res.status(400).send(error); 

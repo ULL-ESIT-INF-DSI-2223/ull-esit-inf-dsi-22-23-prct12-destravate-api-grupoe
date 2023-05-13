@@ -5,6 +5,12 @@ import { Reto } from '../src/models/retos.js';
 import { Grupo } from '../src/models/grupos.js';
 import { Track } from '../src/models/track.js';
 
+before(async () => {
+  await Track.deleteMany();
+  await User.deleteMany();
+  await Grupo.deleteMany();
+  await Reto.deleteMany();
+});
 
 
 describe('Pruebas rutas incorrectas', () => {

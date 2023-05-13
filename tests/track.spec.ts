@@ -6,44 +6,22 @@ import { Grupo } from '../src/models/grupos.js';
 import { Track } from '../src/models/track.js';
 
 
-//! todavía no he metido grupos en la base de datos 336-346, 386-398 --> update
-//! falta en delete por id y por nombre, no tengo retos, grupos... --> delete
-
-
-const firstUser = {
-	nombre: "Marco 2",
-	actividad: "Correr",
-	estadisticas: "5-5,10-10,20-20"
-}
-
-const secondUser = {
-	nombre: "Julio 2",
-	actividad: "Correr",
-	estadisticas: "5-5,10-10,20-20"
-}
-
 let id1 = 0;
-let id2 = 0;
 let id_track = 0;
 
-// nombre: string;
-// coordenadas_inicio_ruta: string;
-// coordenada_fin_ruta: string;
-// longitud: number;
-// desnivel: number;
-// usuarios: UserDocumentInterface[];
-// tipo_actividad: 'bicicleta' | 'correr';
-// calificacion_media: number;
+const firstUser = {
+	nombre: "Marco",
+	actividad: "Correr",
+	estadisticas: "5-5,10-10,20-20",
+}
+
 
 before (async () => {
-	await Track.deleteMany();
-	await User.deleteMany();
+
   const FirstUser = await new User(firstUser).save();
-	const SecondUser = await new User(secondUser).save();
 	id1 = FirstUser._id.toString();
-  id2 = SecondUser._id.toString();
   const trackZero = await new Track({
-    nombre: "Tenerife Blue Trail", 
+    nombre: "Tenerife Ultra Blue Trail ", 
     coordenadas_inicio_ruta: "-33.865143, 151.2099",
     coordenada_fin_ruta: "-33.865143, 151.2099",
     longitud: 5,
@@ -52,27 +30,33 @@ before (async () => {
     tipo_actividad: "correr",
     calificacion_media: 7
   }).save();
-  id_track = trackZero._id.toString();
+  id_track = trackZero._id;
+  const secondUser = {
+    nombre: "Julio",
+    actividad: "Correr",
+    estadisticas: "5-5,10-10,20-20",
+    historico_rutas: [id_track]
+  }
+  const SecondUser = await new User(secondUser).save();
+
 });
 
 
 describe('POST /tracks', () => {
-  // const track1 = {
-  //   nombre: "Transvulcania", 
-  //   coordenadas_inicio_ruta: "28.629572, -17.840229",
-  //   coordenada_fin_ruta: "51.507222, -0.1275",
-  //   longitud: 7,
-  //   desnivel: 9,
-  //   // usuarios: [id1],
-  //   tipo_actividad: "correr",
-  //   calificacion_media: 8
-  // }
-  // it('Creación de un nuevo track', async () => {
-    //   await request(server).post('/users').send(track1).expect(201);
-  // });
-  //? tengo que revisar por que falla.
+  const track1 = {
+    nombre: "Transvulcania", 
+    coordenadas_inicio_ruta: "28.629572, -17.840229",
+    coordenada_fin_ruta: "51.507222, -0.1275",
+    longitud: 7,
+    desnivel: 9,
+    tipo_actividad: "correr",
+    calificacion_media: 8
+  }
+  it('Creación de un nuevo track', async () => {
+    await request(server).post('/tracks').send(track1).expect(201);
+  });
   it('Creación de un nuevo track falla', async () => {
-    await request(server).post('/users').send({}).expect(400);
+    await request(server).post('/tracks').send({}).expect(400);
   });
 
 });
@@ -90,65 +74,55 @@ describe('GET /tracks', () => {
     await request(server).get('/tracks/'+id_track).send().expect(200);
   });
   it('Obtener un track inexistente por id', async () => {
-    await request(server).get('/tracks/1234').send().expect(400);
+    await request(server).get('/tracks/645fcba81df183ca21d3c8ff').send().expect(400);
   });
 });
 
-// describe('Patch /users', () => {
-// 	it('Actualizar usuario existente falla', async () => {
-// 		await request(server).patch('/users').send({
-// 			nombre: ""
-// 		}).expect(400);
-// 	});
+describe('Patch /tracks', () => {
+	it('Actualizar track inexistente falla', async () => {
+		await request(server).patch('/tracks?nombre=trail1').send({
+			nombre: ""
+		}).expect(400);
+	});
 
-// 	it('Actualizar usuario existente', async () => {
-// 		await request(server).patch('/users?nombre=Adrian').send({
-// 			nombre: "Adrian",
-// 			actividad: "Correr",
-// 			amigos: [id],
-// 			estadisticas: "5-5,10-10,20-20"
-// 		}).expect(200);
-// 	});
+  it('Actualizar track existente', async () => {
+    await request(server).patch('/tracks?nombre=Tenerife Blue Trail').send({
+     calificacion_media: 9
+    }).expect(200);
+  });
 
-// 	// it('Actualizar usuario existente con amigos falsos', async () => {
-// 	// 	await request(server).patch('/users?nombre=Adrian').send({
-// 	// 		nombre: "Adrian",
-// 	// 		actividad: "Correr",
-// 	// 		amigos: ["1234", "1111"],
-// 	// 		estadisticas: "5-5,10-10,20-20"
-// 	// 	}).expect(400);
-// 	// });
+  it('Actualizar track existente por id', async () => {
+    await request(server).patch('/tracks/'+id_track).send({
+     calificacion_media: 9.5
+    }).expect(200);
+  });
 
-// 	it('Actualizar usuario existente con id', async () => {
-// 		await request(server).patch('/users/' + id).send({
-// 			nombre: "Isidro",
-// 			actividad: "Correr",
-// 			estadisticas: "5-5,10-10,20-20"
-// 		}).expect(200);
-// 	});
-
+  it('Actualizar track inexistente por id falla', async () => {
+    await request(server).patch('/tracks/645fcba81df183ca21d3c8ff').send({
+     calificacion_media: 9.5
+    }).expect(404);
+  });
 	
-// });
+});
 
 
 
 
-// describe('Delete /users', () => {
-// 	it('Borrar usuario existente', async () => {
-// 		await request(server).delete('/users?nombre=Nestor').send().expect(200);
-// 	});
-// 	it('Borrar usuario inexistente', async () => {
-// 		await request(server).delete('/users?nombre=Fernando').send().expect(400);
-// 	});
-	
-// 	it('Borrar usuario existente con id', async () => {
-// 		await request(server).delete('/users/'+id).send().expect(200);
-// 	});
-
-// 	it('Borrar usuario inexistente con id falla', async () => {
-// 		await request(server).delete('/users/1234').send().expect(400);
-// 	});
-// });
+describe('Delete /tracks', () => {
+	it('Borrar track inexistente', async () => {
+		await request(server).delete('/tracks?nombre=trail1').send().expect(400);
+	});
+  it('Borrar track existente', async () => {
+    await request(server).delete('/tracks?nombre=Transvulcania').send().expect(200);
+  }
+  );
+  it('Borrar track existente por id', async () => {
+    await request(server).delete('/tracks/'+id_track).send().expect(200);
+  });
+  it('Borrar track inexistente por id falla', async () => {
+    await request(server).delete('/tracks/645fcba81df183ca21d3c8ff').send().expect(400);
+  });
+});
 
 
 
