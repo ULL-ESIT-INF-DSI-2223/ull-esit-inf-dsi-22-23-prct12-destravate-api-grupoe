@@ -78,24 +78,7 @@ before (async () => {
 });
 
 
-// nombre: string;
-// participantes: {
-//   participante: UserDocumentInterface;
-//   fecha: string;
-// }[];
-// estadisticasGrupales: string; 
-// clasificacion: {
-//   participante: UserDocumentInterface;
-//   fecha: string;
-// }[];
-// rutas_favoritas: {
-//   ruta: string;
-//   numero_veces: number;
-// }[];
-// historico_rutas: {
-//   fecha: string;
-//   rutas: TrackDocumentInterface[];
-// }[]; 
+
 describe('POST /groups', () => {
   it ('Creación de un nuevo grupo', async () => {
     await request(server).post('/groups').send({

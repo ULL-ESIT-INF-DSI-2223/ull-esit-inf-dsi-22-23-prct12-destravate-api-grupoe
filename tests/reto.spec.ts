@@ -78,11 +78,7 @@ before (async () => {
 
   id_group = grupoOne._id;
 
-  // nombre: string;
-  // actividad: 'Correr' | 'Bicicleta';
-  // rutas: TrackDocumentInterface[];
-  // kms: number; // hacer funcion que calcule los kms de todas las rutas que incluyen el reto
-  // usuarios: UserDocumentInterface[];
+
 
   const retoOne = await new Reto({
     nombre: "Reto 1",
