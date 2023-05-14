@@ -4,7 +4,7 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ULL-ESIT-INF-DSI-2223_ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoe&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ULL-ESIT-INF-DSI-2223_ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoe)
 
-[![Tests](https://github.com/Marcant97/P13-DSI/actions/workflows/node.js.yml/badge.svg)](https://github.com/Marcant97/P13-DSI/actions/workflows/node.js.yml)
+[![Tests](https://github.com/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoe/actions/workflows/node.js.yml/badge.svg)](https://github.com/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoe/actions/workflows/node.js.yml)
 
 ## Índice
 [1.Autores](#autores)  
@@ -24,7 +24,7 @@
  - Marco Antonio Barroso Hormiga (alu0101386560@ull.edu.es)
 
 ### Introducción  
-En esta práctica, la segunda grupal de la asignatura, se tendrá que implementar un API REST, haciendo uso de Node.js y Express, que permita llevar a cabo operaciones de creación, lectura, modificación y borrado (Create, Read, Update, Delete - CRUD) de un registro de actividades deportivas.  
+En este proyecto, el segundo grupal de la asignatura, se tendrá que implementar un API REST, haciendo uso de Node.js y Express, que permita llevar a cabo operaciones de creación, lectura, modificación y borrado (Create, Read, Update, Delete - CRUD) de un registro de actividades deportivas.  
 
 ### Enunciado del proyecto  
 *Track*  
@@ -113,7 +113,9 @@ El código fuente del proyecto se encuentra alojado en el directorio *src*. Dent
   console.log('Server running on port 3000');
   });
 ```
-A continuación, tenemos un fichero por cada modelo, donde se gestionan las peticiones relacionadas con el mismo. Las diferentes peticiones realizadas son: post, delete, update y get. A modo de ejemplo, comentaremos brevemente el post de user.
+El proyecto es extenso, por lo tanto consideramos que lo más adecuado es explicar que se ha desarrollado para las peticiones en cada uno de los ficheros del directorio _routers_. Para cada uno de los modelos, se ha desarrollado un fichero con el nombre del modelo en plural, donde se encuentran las diferentes peticiones.
+
+Las diferentes peticiones realizadas son: post, delete, update y get. A modo de ejemplo, el post de /users tiene en su interior un bloque try-catch, donde en primer lugar se comprueba que los amigos que se han pasado en el body existen, y en caso de que no sea así, se devuelve un error. Se repite la operación para los grupos. En caso de que todo vaya bien, se crea un nuevo usuario y se guarda en la base de datos, además de devolver un código 201.
 ```ts
   import { User } from '../models/user.js';
   import { Reto } from '../models/retos.js';
@@ -157,15 +159,9 @@ A continuación, tenemos un fichero por cada modelo, donde se gestionan las peti
   });
 ```
 
-Ha sido una práctica bastante extensa, para no poner todo el código en el informe, consideramos mejor explicar que se ha desarrollado para las peticiones en cada uno de los ficheros del directorio _routers_. 
+El getter, se ha desarrollado de manera que se puede solicitar un elemento mediante el nombre del mismo en la query de la petición, o pasando el id como parámetro. De manera similar sucede en el borrar y el modificar.
 
-Para cada uno de los modelos, se ha desarrollado un fichero con el nombre del modelo en plural, donde se encuentran las diferentes peticiones.
-
-Comenzamos con el post, en el cual se crea un nuevo objeto del modelo correspondiente con los datos que se han recibido en la body de la peticion. En todas se introducen los valores definidos en el schema, menos en grupo que las calificaciones son calculadas a partir de los miembros del grupo.  
-
-El getter, se ha desarrollado de manera que se puede solicitar un elemento mediante el nombre del mismo en la query de la peticiónm, o pasando el id como parámetro. De manera similar sucede en el borrar y el modificar.
-
-Asimismo, mencionar que en el caso de los usuarios y en rutas, se ha sido muy meticuloso en el borrado ya que como son atributos de los schemas de otras tablas se gestiona aqui que si al borrar un elemento que se encuentre en otra tabla, vease el caso de un usuario que se encuentra en la tabla de amigos de otro usuario, se borre de la misma.
+Asimismo, mencionar que en el caso de los usuarios y en rutas, se ha sido muy meticuloso en el borrado ya que como son atributos de los schemas de otras tablas, se gestiona aqui el borrado de un elemento que se encuentre en otra tabla, vease el caso de un usuario que se encuentra en la tabla de amigos de otro usuario, se borre de la misma.
 
 3. *db*: Contiene un fichero relacionado con la conexión a la base de datos.  
 
@@ -180,13 +176,13 @@ Asimismo, mencionar que en el caso de los usuarios y en rutas, se ha sido muy me
   }
 ```
 
-Se hace uso de _"MONGODB_URL"_ debido a que se esta haciendo uso de una variable de entorno para diferenciar entre la base de datos de desarrollo y la de producción. Tenemos dichas variables alojadas en un fichero config que se encuentra en el directorio raíz del proyecto.  
+Se hace uso de _"MONGODB_URL"_ debido a que se esta haciendo uso de una variable de entorno para diferenciar entre la base de datos de desarrollo y la de producción. Tenemos dichas variables alojadas en 2 ficheros config (dev.env y test.env) que se encuentra en el directorio raíz del proyecto.  
 
 A continuación, se muestra el contenido del fichero "dev.env":
 
 ```
-PORT=3000
-MONGODB_URL=mongodb://127.0.0.1:27017/app
+  PORT=3000
+  MONGODB_URL=mongodb://127.0.0.1:27017/app
 ```
 
 ### Relaciones entre tablas.
@@ -205,13 +201,19 @@ Esta parte fue la más complicada de implementar, en concreto está relacionada 
 *Grupos*  --> Si se borra un grupo, entonces:  
   - Se debe borrar dicho grupo de los usuarios, en concreto se deberá actualizar los grupos de los usuarios que pertenecían a dicho grupo.
 
+
+### Tests  
+Los tests nos dieron bastantes problemas debido a decisiones de diseño en el inicio del proyecto, en concreto, no utilizamos un identificador propio, el único id con el que cuenta cada elemento es el que le asigna automáticamente MongoDB. Por lo tanto, para todas las relaciones entre tablas para las que se requiere el id, o operaciones como borrar por id o modificar por id, fueron un poco más complicadas de implementar. La solución que encontramos fue la de almacenar en una variable los id que fuesemos necesitando en cada momento, para poder utilizarlos posteriormente. Además de todo esto, tuvimos problemas con los métodos hook, necesarios para añadir borrar toda la base de datos de testeo antes de ejecutar los tests. Los paquetes utilizados son mocha, chai y supertest. Las pruebas se encuentran distribuidas en 5 ficheros, uno por cada fichero de "./src/routers".
+
+
+### Despliegue  
+El despliegue fue relativamente sencillo, tan sólo tuvimos que seguir la guía de los apuntes. A modo de resumen, primero nos creamos una cuenta en MongoDB Atlas, donde creamos un cluster y una base de datos. El siguietne paso fue creanos una cuenta en Cyclic, además de hacerle un fork al repo. Luego descargamos MongoBD Compass para poder conectarnos a la base de datos y poder ver los datos que se iban almacenando. Para probar nuestra API, hicimos uso de la extensión *ThunderClient* de VSCode, donde realizamos las diferentes peticiones y comprobamos que todo funcionaba correctamente. 
+La dirección que se nos ha asignado es la siguiente: [Dirección](https://jade-swallow-yoke.cyclic.app/).
+
 ### Dificultades
 Las mayores dificultades que hemos tenido en el desarrollo de la API han sido en primer lugar, el tema de las relaciones entre tablas, ya que no teníamos muy claro como hacerlo. Ya que eran numerosas relaciones y habia que ser muy meticuloso a la hora de desarrollar el borrado de algún elemento. Nos facilito el hecho de organizar en un papel todas las relaciones y ver que elementos se veían afectados por el borrado de un elemento.
 
 Asimismo hemos tenido dificultades con el tema de los tests, ya que era la primera vez que los hacíamos y no sabíamos muy bien como implementarlos. Hemos hecho uso de la librería "supertest" para realizar los tests de la API.
-
-### Tests  
-### Despliegue  
 
 ### Referencias
 
