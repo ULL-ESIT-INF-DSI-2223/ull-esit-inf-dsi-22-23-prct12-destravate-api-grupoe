@@ -221,12 +221,12 @@ describe('Patch /users', () => {
 
 
 describe('Delete /users', () => {
-	// it('Borrar usuario existente', async () => {
-	// 	await request(server).delete('/users?nombre=Nestor').send().expect(200);
-	// });
-	// it('Borrar usuario existente', async () => {
-	// 	await request(server).delete('/users?nombre=Isidoro').send().expect(200);
-	// });
+	it('Borrar usuario existente', async () => {
+		await request(server).delete('/users?nombre=Nestor').send().expect(200);
+	});
+	it('Borrar usuario existente', async () => {
+		await request(server).delete('/users?nombre=Isidoro').send().expect(200);
+	});
 
 	it('Borrar usuario inexistente', async () => {
 		// usuario no existe, devuelve 200 por que deletedcount=0

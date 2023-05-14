@@ -14,10 +14,10 @@ before(async () => {
 
 
 describe('Pruebas rutas incorrectas', () => {
-  // it('Post ruta incorrecta', async () => {
-  //   await request(server).post('/hola').send({
-  //   }).expect(404);
-  // });
+  it('Post ruta incorrecta', async () => {
+    await request(server).post('/hola').send({
+    }).expect(404);
+  });
 	it('get ruta incorrecta', async () => {
     await request(server).get('/hola').send({
     }).expect(404);
