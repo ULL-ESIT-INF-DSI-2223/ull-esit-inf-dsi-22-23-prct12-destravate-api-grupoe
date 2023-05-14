@@ -14,7 +14,6 @@ export interface UserDocumentInterface extends Document {
   }[];
   estadisticas: string;
   rutas_favoritas: TrackDocumentInterface[];
-  //retos_activos: string[];
   historico_rutas: {
     fecha: string;
     rutas: TrackDocumentInterface[];
