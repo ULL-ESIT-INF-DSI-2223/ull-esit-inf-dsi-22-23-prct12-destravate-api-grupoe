@@ -76,7 +76,6 @@ const GrupoSchema = new Schema({
       },
       numero_veces: Number
     }],
-    // required: true,
   },
 });
 

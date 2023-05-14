@@ -55,7 +55,6 @@ before (async () => {
 
 	const fifthUser = await new User({
 		nombre: "Julian 2", 
-		// amigos: [id],
 		grupos: [
 			{
 				nombreGrupo: "Grupo 1",
@@ -111,21 +110,6 @@ before (async () => {
 
 });
 
-// nombre: string;
-// actividad: 'Correr' | 'Bicicleta';
-// amigos: UserDocumentInterface[];
-// grupos: {
-// 	nombreGrupo: string;
-// 	miembros: UserDocumentInterface[];
-// }[];
-// estadisticas: string;
-// rutas_favoritas: TrackDocumentInterface[];
-// //retos_activos: string[];
-// historico_rutas: {
-// 	fecha: string;
-// 	rutas: TrackDocumentInterface[];
-// }[];
-
 
 describe('POST /users', () => {
   it('Creación de un nuevo usuario', async () => {
@@ -139,7 +123,6 @@ describe('POST /users', () => {
 	it('Creación de un nuevo usuario con un nombre vacio', async () => {
 		await request(server).post('/users').send({nombre: ""}).expect(400);
 	});
-	// usuario con amigos existentes --> no se puede
 	it('Creación de un nuevo usuario 2', async () => {
 		const thirdUser = {
 			nombre: "Nestor",
@@ -229,7 +212,6 @@ describe('Delete /users', () => {
 	});
 
 	it('Borrar usuario inexistente', async () => {
-		// usuario no existe, devuelve 200 por que deletedcount=0
 		await request(server).delete('/users?nombre=Fernando').send().expect(400);
 	});
 

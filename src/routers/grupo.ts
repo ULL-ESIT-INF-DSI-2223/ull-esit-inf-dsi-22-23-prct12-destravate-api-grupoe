@@ -16,7 +16,6 @@ grupoRouter.post('/', async (req, res) => {
     //* calcular ranking
     // Como asumimos que todos los participantes del grupo realizan todas las rutas planificadas, simplmente ordenamos los usuarios
     // por su fecha de llegada al grupo.
-    // ordenar por fecha de llegada al grupo
     grupo.clasificacion = grupo.participantes.sort((a, b) => {
       if (a.fecha < b.fecha) {
         return -1;
@@ -130,7 +129,6 @@ grupoRouter.patch('/:id', async (req, res) => {
 
 //* Modificar por Nombre
 grupoRouter.patch('/', async (req, res) => {
-  //! comprobar que se esta añadiendo un nombre
   if (!req.query.nombre) {
     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder actualizarla"});
   }

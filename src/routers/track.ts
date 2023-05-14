@@ -66,7 +66,6 @@ trackRouter.delete('/', async (req, res) => {
   try {
     //? ALMACENAMOS LA ID DE LA RUTA PARA FUTURAS ELIMINACIONES EN OTRAS TABLAS
     const trackDeletedID = await Track.findOne({nombre: req.query.nombre.toString()}).select('id');
-    //console.log(trackDeletedID);
     if (!trackDeletedID) {
       return res.status(400).send({error: "No se encontró un track con ese nombre en la base de datos"});
     }
@@ -78,17 +77,11 @@ trackRouter.delete('/', async (req, res) => {
     }
     
     //? BORRAR EL TRACK DE LA TABLA USUARIOS --> DE LAS RUTAS FAVORITAS
-    //recorrer todos los usuarios de la bbdd
     const users = await User.find();
     users.forEach(async (user) => {
-      //console.log(user.rutas_favoritas);
       user.rutas_favoritas.forEach(async (ruta, index) => {
-        //console.log(ruta.id.troString());
         if(trackDeletedID !== null) {
-          // console.log("RUTA: " + ruta.toString());
-          // console.log("ID: " + trackDeletedID.id.toString());
           if (ruta.toString() === trackDeletedID.id.toString()) {
-            //console.log("ENTRA");
             user.rutas_favoritas.splice(index, 1);
             await user.save();
           }
@@ -154,7 +147,6 @@ trackRouter.delete('/', async (req, res) => {
 trackRouter.delete('/:id', async (req, res) => {
   try {
     //? ALMACENAMOS LA ID DE LA RUTA PARA FUTURAS ELIMINACIONES EN OTRAS TABLAS
-    // const trackDeletedID = await Track.findOne({id: req.params.id.toString()}).select('id');
     const trackDeletedID = req.params.id;
     if (!trackDeletedID) {
       return res.status(400).send({error: "No se encontró un track con ese id en la base de datos"});
@@ -167,17 +159,11 @@ trackRouter.delete('/:id', async (req, res) => {
 
 
     //? BORRAR EL TRACK DE LA TABLA USUARIOS --> DE LAS RUTAS FAVORITAS
-    //recorrer todos los usuarios de la bbdd
     const users = await User.find();
     users.forEach(async (user) => {
-      //console.log(user.rutas_favoritas);
       user.rutas_favoritas.forEach(async (ruta, index) => {
-        //console.log(ruta.id.troString());
         if(trackDeletedID !== null) {
-          // console.log("RUTA: " + ruta.toString());
-          // console.log("ID: " + trackDeletedID.id.toString());
           if (ruta.toString() === trackDeletedID.toString()) {
-            //console.log("ENTRA");
             user.rutas_favoritas.splice(index, 1);
             await user.save();
           }

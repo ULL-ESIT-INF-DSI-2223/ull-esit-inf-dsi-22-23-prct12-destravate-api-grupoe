@@ -37,8 +37,7 @@ const RetoSchema = new Schema({
     required: true,
   },
   kms: {
-    type: Number, // se calcula al postear el reto
-    //required: true,
+    type: Number,
   },
   usuarios: {
     type: [Schema.Types.ObjectId],

@@ -16,13 +16,9 @@ userRouter.post('/', async (req, res) => {
   try {
     //? comprobar si en la base de datos de usuarios existen esos usuarios
     if (req.body.amigos) {
-      //iterar sobre el array de amigos
       while (req.body.amigos.length) {
-        //sacar el primer elemento del array
         const amigo = req.body.amigos.shift();
-        //buscar en la bbdd de usuarios ese id
         const user = await User.findById(amigo);
-        //si no existe, devolver error
         if (!user) {
           return res.status(400).send({error: "Alguno de los amigos no existe"});
         }
@@ -216,8 +212,6 @@ userRouter.delete('/:id', async (req, res) => {
   try {
 
     //? ALMACENAMOS EL ID DEl USUARIO QUE 
-    // const userDeletedID = await User.findOne({id: req.params.id.toString()}).select('id');
-    // console.log('User deleted id: ' + req.params.id.toString());
     const userDeletedID = await User.findById(req.params.id);
     if (!userDeletedID) {
       return res.status(400).send({error: "No se encontró un usuario con ese nombre en la base de datos"});
@@ -325,7 +319,6 @@ userRouter.delete('/:id', async (req, res) => {
 
 //* Modificar usuario por nombre
 userRouter.patch('/', async (req, res) => {
-  //! comprobar que se esta añadiendo un nombre
   if (!req.query.nombre) {
     return res.status(400).send({error: "Se debe añadir un nombre de ruta para poder actualizarla"});
   }
@@ -340,13 +333,9 @@ userRouter.patch('/', async (req, res) => {
 
   //? comprobar si en la base de datos de usuarios existen esos usuarios
   if (req.body.amigos) {
-    //iterar sobre el array de amigos
     while (req.body.amigos.length) {
-      //sacar el primer elemento del array
       const amigo = req.body.amigos.shift();
-      //buscar en la bbdd de usuarios ese id
       const user = await User.findById(amigo);
-      //si no existe, devolver error
       if (!user) {
         return res.status(400).send({error: "Alguno de los amigos no existe"});
       }
@@ -392,13 +381,9 @@ userRouter.patch('/:id', async (req, res) => {
 
   //? comprobar si en la base de datos de usuarios existen esos usuarios
   if (req.body.amigos) {
-    //iterar sobre el array de amigos
     while (req.body.amigos.length) {
-      //sacar el primer elemento del array
       const amigo = req.body.amigos.shift();
-      //buscar en la bbdd de usuarios ese id
       const user = await User.findById(amigo);
-      //si no existe, devolver error
       if (!user) {
         return res.status(400).send({error: "Alguno de los amigos no existe"});
       }

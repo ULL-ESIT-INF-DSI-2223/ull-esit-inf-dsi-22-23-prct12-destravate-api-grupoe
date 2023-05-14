@@ -43,7 +43,6 @@ const UserSchema = new Schema({
   amigos: {
     type: [Schema.Types.ObjectId],
     ref: 'User',
-    // required: true,
   },
   grupos: {
     type: [{
@@ -53,7 +52,6 @@ const UserSchema = new Schema({
         ref: 'User',
       }],
     }]
-    // required: true,
   },
   estadisticas: {
     type: String,
@@ -67,13 +65,7 @@ const UserSchema = new Schema({
   rutas_favoritas: {
     type: [Schema.Types.ObjectId],
     ref: 'Track',
-    // required: true,
   },
-  //! Hay que esperar a tener el model de challenge listo
-  // retos_activos: {
-  //   type: [Schema.Types.ObjectId],
-  //   // required: true,
-  // },
   historico_rutas: {
     type: [{
       fecha: String,

@@ -12,7 +12,6 @@ retoRouter.post('/', async (req, res) => {
   const reto = new Reto(req.body);
   
   reto.kms = 0;
-  // calcular los kms de las rutas que incluye el reto
   while(req.body.rutas.length) {
     const ruta = req.body.rutas.shift();
     const track = await Track.findById(ruta);
@@ -20,8 +19,6 @@ retoRouter.post('/', async (req, res) => {
       return res.status(400).send({error: "Alguna de las rutas no existe"});
     }
     reto.kms += track.longitud;
-    // console.log("KMS  " + reto.kms);
-    // console.log("longitud  " + track.longitud);
   }
 
   try {
